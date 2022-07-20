@@ -1,0 +1,25 @@
+MAS hanabi_NUMPLAYERS_SEED {
+
+    environment:
+        // mas2j file, numLives, numInfoTokens, numColors, numRanks, seed
+        hanabiEnv.HanabiGame("hanabi.mas2j", 3, 8, 5, 5, SEED)
+
+    agents:
+        alice hanabi_player [filename="alice_NUMPLAYERS_SEED.csv"]
+            agentClass tomabd.agent.TomAbdAgent;
+
+        bob hanabi_player [filename="bob_NUMPLAYERS_SEED.csv"]
+            agentClass tomabd.agent.TomAbdAgent;
+
+        // cathy hanabi_player [filename="cathy_NUMPLAYERS_SEED.csv"]
+        //     agentClass tomabd.agent.TomAbdAgent;
+
+        // donald hanabi_player
+        //     agentClass tomabd.agent.TomAbdAgent;
+
+        // emma hanabi_player
+        //     agentClass tomabd.agent.TomAbdAgent;
+
+    classpath: "../../lib/tomabd.jar";
+
+}

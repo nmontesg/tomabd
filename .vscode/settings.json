@@ -1,0 +1,14 @@
+{
+    "java.project.sourcePaths": [
+        "src"
+    ],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/tomabd.jar",
+        "/home/nmontes/jason-3.1/libs/jason-3.1.jar"
+    ],
+    "cSpell.words": [
+        "abducible",
+        "abductive"
+    ]
+}

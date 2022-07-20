@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+
+    "tasks": [
+        {
+            "label": "tomabd: Build jar",
+            "type": "java",
+            "targetPath": "${workspaceFolder}/lib/${workspaceFolderBasename}.jar",
+            "elements": [
+                "${compileOutput}",
+                "${dependencies}"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+        {
+            "label": "tomabd: Clean jar",
+            "type": "shell",
+            "command": "rm ${workspaceFolder}/lib/${workspaceFolderBasename}.jar",
+            "problemMatcher": []
+        },
+
+        {
+            "label": "hanabi: Run MAS",
+            "type": "shell",
+            "command": "jason",
+            "args": [
+                "${workspaceFolder}/examples/hanabi/hanabi.mas2j"
+            ],
+            "problemMatcher": []
+        },
+
+        {
+            "label": "tomabd: Build docs",
+            "type": "shell",
+            "command": "doxygen docs/config.cfg",
+            "problemMatcher": []
+        }
+    ]
+}
