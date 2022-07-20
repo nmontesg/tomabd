@@ -1,20 +1,11 @@
-## Getting Started
+# Theory of Mind + Abduction
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+This package provides a [Jason](http://jason.sourceforge.net)
+agent that combines Theory of Mind and abductive reasoning to interpret and
+extract information from the actions of other agents.
 
-## Folder Structure
+Check the [documentation](https://nmontesg.github.io/tomabd/html/index.html)
+for a detailed description of the agent model.
 
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
-
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
-
-## Dependency Management
-
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
-
-// TODO: write, copy-paste from docs main page
+### References
+<!-- TODO: add references here later on -->
