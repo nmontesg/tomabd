@@ -14,10 +14,10 @@ MAS hanabi_NUMPLAYERS_SEED {
         // cathy hanabi_player [filename="cathy_NUMPLAYERS_SEED.csv"]
         //     agentClass tomabd.agent.TomAbdAgent;
 
-        // donald hanabi_player
+        // donald hanabi_player [filename="donald_NUMPLAYERS_SEED.csv"]
         //     agentClass tomabd.agent.TomAbdAgent;
 
-        // emma hanabi_player
+        // emma hanabi_player [filename="emma_NUMPLAYERS_SEED.csv"]
         //     agentClass tomabd.agent.TomAbdAgent;
 
     classpath: "../../lib/tomabd.jar";

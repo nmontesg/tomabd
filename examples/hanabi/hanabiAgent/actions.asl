@@ -15,28 +15,49 @@ give_hint(P, color, C, SL) :-
 // other players have to abduce with the state of the game as it is when
 // the action is selected, i.e. BEFORE it is performed
 
+// TODO: after revealing a card, I should update the possible_cards:
+// I have to update on the basis of the NEW information that I am getting
+// +has_card_color(Me, Slot, Color) <- ...
+// +has_card_rank(Me, Slot, Rank) <- ...
+// both when I learn something NEW about me and about the other players
+// both through observation (as in when playing or discarding a card)
+// or getting new information through hints
+// also when a card is replaced it should have its probability distribution
+// reset
 
 @playCard[atomic,domain(hanabi)]
 +!play_card(Slot) : my_name(Me)
     <- reveal_card(Slot);
+    !update_probability_distributions_upon_reveal(Slot);
+
     play_card(Slot);
+
     .broadcast(achieve, remove_hint_info(Me, Slot));
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
     !update_slots(took_card(Slot));
     !replace_card(Slot);
+
+    !log_all_distributions(false);
+
     finish_turn.
 
     
 @discardCard[atomic,domain(hanabi)]
 +!discard_card(Slot) : my_name(Me)
     <- reveal_card(Slot);
+    !update_probability_distributions_upon_reveal(Slot);
+
     discard_card(Slot);
+
     .broadcast(achieve, remove_hint_info(Me, Slot));
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
     !update_slots(took_card(Slot));
     !replace_card(Slot);
+
+    !log_all_distributions(false);
+
     finish_turn.
 
 
@@ -56,6 +77,9 @@ give_hint(P, color, C, SL) :-
         }
     }
     spend_info_token(HintedPlayer, Mode, Value, SlotList);
+
+    !log_all_distributions(false);
+
     finish_turn.
 
 
@@ -63,13 +87,19 @@ give_hint(P, color, C, SL) :-
 +!replace_card(Slot) : num_cards_deck(D) & D > 0
     <- draw_random_card(Slot);
     !update_slots(placed_card(Slot));
-    .broadcast(achieve, update_slots(placed_card(Slot))).
+    .broadcast(achieve, update_slots(placed_card(Slot)));
+    
+    !reset_probability_distribution(Slot);
+    .broadcast(achieve, update_probability_distributions_after_replacement(Slot)).
 
 
 @replaceCard2[atomic,domain(hanabi)]
 +!replace_card(Slot) : num_cards_deck(0) & my_name(Me)
     <- .abolish(has_card_color(Me, Slot, _));
-    .abolish(has_card_rank(Me, Slot, _)).
+    .abolish(~has_card_color(Me, Slot, _));
+    .abolish(has_card_rank(Me, Slot, _));
+    .abolish(~has_card_rank(Me, Slot, _));
+    .abolish(possible_cards(Slot, _, _, _)).
 
 
 @updateSlots1[atomic,domain(hanabi)]

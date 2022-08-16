@@ -11,15 +11,15 @@ domain(hanabi).
 
 @getReady[atomic,domain(hanabi)]
 +!get_ready
-    <- ?seed(Seed);            // set internal random seed
-    .set_random_seed(Seed);
 
-    // add own identity as belief
-    .my_name(Me);
+    : seed(Seed) & .my_name(Me) & num_players(NP) & cards_per_player(N)
+    
+    <- .set_random_seed(Seed);
+
+    // add own identity as a belief
     +my_name(Me);
 
     // initialize slots for players from oldest to newest
-    ?cards_per_player(N);
     .findall(Ag, player(Ag), PlayerList);
     .findall(X, .range(X, 1, N), SlotList);
     for ( .member(P, PlayerList) ) {
@@ -28,6 +28,12 @@ domain(hanabi).
 
     // initialize probability distributions for all the slots
     !initialize_probability_distributions;
+
+    // make a log file
+    // .concat(Me, "_", NP, "_", Seed, ".txt", FileName);
+    // +abduction_log(FileName);
+    // .log(info, FileName);
+    // hanabiAgent.create_abduction_log(FileName);
     
     // inform that I am ready to start the game
     inform_ready.
@@ -42,7 +48,7 @@ all_minus_me(L) [domain(hanabi)] :-
 
 
 @takeTurn[domain(hanabi)]
-+player_turn(Me) : .my_name(Me)
++player_turn(Me) : .my_name(Me) // & .my_name(mary)
     <- !select_action;
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
     !perform_action.
@@ -73,10 +79,40 @@ all_minus_me(L) [domain(hanabi)] :-
     !Action.
 
 
-@kqmlReceivedHint[atomic,domain(hanabi)]
-+!kqml_received(KQML_Sender_Var, hint, KQML_Content_Var, KQML_MsgId)
+@kqmlReceivedHint[domain(hanabi),atomic]
++!kqml_received(KQML_Sender_Var, hint, KQML_Content_Var, KQML_MsgId) : .my_name(Me)
     <- .add_annot(KQML_Content_Var, source(hint), H);
-    +H.
+    +H;
+
+    // TODO: update probabilities with the *explicit* information
+    .findall(C, color(C), Colors);
+    .findall(R, rank(R), Ranks);
+
+    if ( KQML_Content_Var = has_card_color(Me, Slot, Color) ) {
+        for ( .member(IC, Colors) ) {
+            if ( IC \== Color ) {
+                for ( .member(IR, Ranks) ) {
+                    -+possible_cards(Slot, IC, IR, 0);
+                }
+            }
+        }
+    } elif ( KQML_Content_Var = ~has_card_color(Me, Slot, Color) ) {
+        for ( .member(IR, Ranks) ) {
+            -+possible_cards(Slot, Color, IR, 0);
+        }
+    } elif ( KQML_Content_Var = has_card_rank(Me, Slot, Rank) ) {
+        for ( .member(IR, Ranks) ) {
+            if ( IR \== Rank ) {
+                for ( .member(IC, Colors) ) {
+                    -+possible_cards(Slot, IC, IR, 0);
+                }
+            }
+        }
+    } elif ( KQML_Content_Var = ~has_card_rank(Me, Slot, Rank) ) {
+        for ( .member(IC, Colors) ) {
+            -+possible_cards(Slot, IC, Rank, 0);
+        }
+    }.
 
 
 @kqmlReceivedPublicAction[atomic,domain(hanabi)]

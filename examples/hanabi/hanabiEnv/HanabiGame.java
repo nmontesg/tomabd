@@ -1,9 +1,11 @@
 package hanabiEnv;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.Random;
 import jason.asSyntax.Literal;
 import jason.asSyntax.NumberTermImpl;
 import jason.asSyntax.Structure;
+import jason.asSyntax.Term;
 import jason.environment.Environment;
 import jason.mas2j.AgentParameters;
 import jason.mas2j.MAS2JProject;
+import jason.stdlib.println;
 
 
 public class HanabiGame extends Environment {
@@ -48,7 +52,12 @@ public class HanabiGame extends Environment {
     private int seed;
 
     private File evolutionLogger;
-    private FileWriter evolutionWriter;
+    // private FileWriter evolutionWriter;
+    private BufferedWriter evolutionBuffer;
+
+    private ArrayList<File> probabilityLoggers = new ArrayList<File>();
+    // private ArrayList<FileWriter> probabilityWriters = new ArrayList<FileWriter>();
+    private ArrayList<BufferedWriter> probabilityBuffers = new ArrayList<BufferedWriter>();
 
     @Override
     public void init(String[] args) {
@@ -181,13 +190,31 @@ public class HanabiGame extends Environment {
 
         addPercept(Literal.parseLiteral(String.format("move(%d)", move)));
 
-        // set up loggers
+        // set up logger for the overall evolution of the game
         try {
-            String evolutionFileName = String.format("evolution_%d_%d.csv", numPlayers, seed);
+            String evolutionFileName = String.format("hanabi_%d_%d.csv", numPlayers, seed);
             evolutionLogger = new File(evolutionFileName);
             evolutionLogger.createNewFile();
-            evolutionWriter = new FileWriter(evolutionFileName);
-            evolutionWriter.write("seed;move;player;action_functor;actions_args;hints;score\n");
+            FileWriter evolutionWriter = new FileWriter(evolutionFileName);
+            evolutionBuffer = new BufferedWriter(evolutionWriter);
+            evolutionBuffer.write("move;player;action_functor;actions_args;hints;score\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // set up loggers for the probability distributions
+        try {
+            for (String a: agents) {
+                String probabilityFileName = String.format("hanabi_prob_%s_%d_%d.csv", a, numPlayers, seed);
+                File probabilityFile = new File(probabilityFileName);
+                probabilityFile.createNewFile();
+                probabilityLoggers.add(probabilityFile);
+                FileWriter probabilityFileWriter = new FileWriter(probabilityFileName);
+                BufferedWriter probabilityBuff = new BufferedWriter(probabilityFileWriter);
+                // probabilityWriters.add(probabilityFileWriter);
+                probabilityBuffers.add(probabilityBuff);
+                probabilityBuff.write("move;slot;color;rank;n;after_abduction\n");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -226,7 +253,7 @@ public class HanabiGame extends Environment {
                 slot = Integer.parseInt(action.getTerm(0).toString());
                 result = playCard(agent, slot);
                 try {
-                    evolutionWriter.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move-1, agent, "play_card", slot, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move-1, agent, "play_card", slot, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -236,7 +263,7 @@ public class HanabiGame extends Environment {
                 slot = Integer.parseInt(action.getTerm(0).toString());
                 result = discardCard(agent, slot);
                 try {
-                    evolutionWriter.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move-1, agent, "discard_card", slot, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move-1, agent, "discard_card", slot, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -247,12 +274,26 @@ public class HanabiGame extends Environment {
                 String actionArgs = action.getTerms().toString();
                 String actionArgsNoBrack = actionArgs.substring(1, actionArgs.length()-1);
                 try {
-                    evolutionWriter.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move-1, agent, "give_hint", actionArgsNoBrack, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move-1, agent, "give_hint", actionArgsNoBrack, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
-                
+            
+            case "log_probability":
+                int index = agents.indexOf(agent);
+                BufferedWriter probLog = probabilityBuffers.get(index);
+                String actionStr = action.toString();
+                String argStr = actionStr.substring(actionStr.indexOf("(")+1, actionStr.indexOf(")"));
+                String newArgStr = argStr.replace(",", ";");
+                try {
+                    probLog.write(String.format("%d;%s\n", move-1, newArgStr));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                result = true;
+                break;
+
             default:
                 break;
         }
@@ -389,7 +430,7 @@ public class HanabiGame extends Environment {
             // if current score == maxScore: finish execution of the game
             if (score == maxScore) {
                 try {
-                    evolutionWriter.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move, agent, "play_card", slot, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move, agent, "play_card", slot, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -421,7 +462,7 @@ public class HanabiGame extends Environment {
             removePerceptsByUnif(Literal.parseLiteral(String.format("score(_)")));
             addPercept(Literal.parseLiteral(String.format("score(%d)", score)));
             try {
-                evolutionWriter.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move, agent, "play_card", slot, hintId, score));
+                evolutionBuffer.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move, agent, "play_card", slot, hintId, score));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -500,10 +541,19 @@ public class HanabiGame extends Environment {
         super.stop();
         System.out.println(String.format("Game finished with score %d and %d hints.", score, hintId));
         try {
-            evolutionWriter.close();
+            evolutionBuffer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        try{
+            for (BufferedWriter bw: probabilityBuffers) {
+                bw.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         System.exit(0);
     }
 
