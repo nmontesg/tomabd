@@ -28,12 +28,6 @@ domain(hanabi).
 
     // initialize probability distributions for all the slots
     !initialize_probability_distributions;
-
-    // make a log file
-    // .concat(Me, "_", NP, "_", Seed, ".txt", FileName);
-    // +abduction_log(FileName);
-    // .log(info, FileName);
-    // hanabiAgent.create_abduction_log(FileName);
     
     // inform that I am ready to start the game
     inform_ready.
@@ -83,36 +77,37 @@ all_minus_me(L) [domain(hanabi)] :-
 +!kqml_received(KQML_Sender_Var, hint, KQML_Content_Var, KQML_MsgId) : .my_name(Me)
     <- .add_annot(KQML_Content_Var, source(hint), H);
     +H;
+    .
 
     // TODO: update probabilities with the *explicit* information
-    .findall(C, color(C), Colors);
-    .findall(R, rank(R), Ranks);
+    // .findall(C, color(C), Colors);
+    // .findall(R, rank(R), Ranks);
 
-    if ( KQML_Content_Var = has_card_color(Me, Slot, Color) ) {
-        for ( .member(IC, Colors) ) {
-            if ( IC \== Color ) {
-                for ( .member(IR, Ranks) ) {
-                    -+possible_cards(Slot, IC, IR, 0);
-                }
-            }
-        }
-    } elif ( KQML_Content_Var = ~has_card_color(Me, Slot, Color) ) {
-        for ( .member(IR, Ranks) ) {
-            -+possible_cards(Slot, Color, IR, 0);
-        }
-    } elif ( KQML_Content_Var = has_card_rank(Me, Slot, Rank) ) {
-        for ( .member(IR, Ranks) ) {
-            if ( IR \== Rank ) {
-                for ( .member(IC, Colors) ) {
-                    -+possible_cards(Slot, IC, IR, 0);
-                }
-            }
-        }
-    } elif ( KQML_Content_Var = ~has_card_rank(Me, Slot, Rank) ) {
-        for ( .member(IC, Colors) ) {
-            -+possible_cards(Slot, IC, Rank, 0);
-        }
-    }.
+    // if ( KQML_Content_Var = has_card_color(Me, Slot, Color) ) {
+    //     for ( .member(IC, Colors) ) {
+    //         if ( IC \== Color ) {
+    //             for ( .member(IR, Ranks) ) {
+    //                 -+possible_cards(Slot, IC, IR, 0);
+    //             }
+    //         }
+    //     }
+    // } elif ( KQML_Content_Var = ~has_card_color(Me, Slot, Color) ) {
+    //     for ( .member(IR, Ranks) ) {
+    //         -+possible_cards(Slot, Color, IR, 0);
+    //     }
+    // } elif ( KQML_Content_Var = has_card_rank(Me, Slot, Rank) ) {
+    //     for ( .member(IR, Ranks) ) {
+    //         if ( IR \== Rank ) {
+    //             for ( .member(IC, Colors) ) {
+    //                 -+possible_cards(Slot, IC, IR, 0);
+    //             }
+    //         }
+    //     }
+    // } elif ( KQML_Content_Var = ~has_card_rank(Me, Slot, Rank) ) {
+    //     for ( .member(IC, Colors) ) {
+    //         -+possible_cards(Slot, IC, Rank, 0);
+    //     }
+    // }.
 
 
 @kqmlReceivedPublicAction[atomic,domain(hanabi)]

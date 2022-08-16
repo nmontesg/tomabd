@@ -38,6 +38,7 @@ give_hint(P, color, C, SL) :-
     !update_slots(took_card(Slot));
     !replace_card(Slot);
 
+    .broadcast(achieve, log_all_distributions(false));
     !log_all_distributions(false);
 
     finish_turn.
@@ -56,6 +57,7 @@ give_hint(P, color, C, SL) :-
     !update_slots(took_card(Slot));
     !replace_card(Slot);
 
+    .broadcast(achieve, log_all_distributions(false));
     !log_all_distributions(false);
 
     finish_turn.
@@ -69,15 +71,16 @@ give_hint(P, color, C, SL) :-
     for ( .range(S, 1, N) ) {
         Belief =.. [Term, [HintedPlayer, S, Value], [source(hint)]];
         if ( .member(S, SlotList) ) {
-            +Belief;
             .broadcast(hint, Belief);
+            +Belief;
         } else {
-            +(~Belief);
             .broadcast(hint, ~Belief);
+            +(~Belief);
         }
     }
     spend_info_token(HintedPlayer, Mode, Value, SlotList);
 
+    .broadcast(achieve, log_all_distributions(false));
     !log_all_distributions(false);
 
     finish_turn.
@@ -86,11 +89,11 @@ give_hint(P, color, C, SL) :-
 @replaceCard1[atomic,domain(hanabi)]
 +!replace_card(Slot) : num_cards_deck(D) & D > 0
     <- draw_random_card(Slot);
-    !update_slots(placed_card(Slot));
     .broadcast(achieve, update_slots(placed_card(Slot)));
-    
-    !reset_probability_distribution(Slot);
-    .broadcast(achieve, update_probability_distributions_after_replacement(Slot)).
+    !update_slots(placed_card(Slot));
+
+    .broadcast(achieve, update_probability_distributions_after_replacement(Slot));
+    !reset_probability_distribution(Slot).
 
 
 @replaceCard2[atomic,domain(hanabi)]

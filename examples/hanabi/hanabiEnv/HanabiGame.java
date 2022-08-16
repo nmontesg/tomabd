@@ -282,16 +282,25 @@ public class HanabiGame extends Environment {
             
             case "log_probability":
                 int index = agents.indexOf(agent);
+                System.out.println(agent + ": line 285");
                 BufferedWriter probLog = probabilityBuffers.get(index);
+                System.out.println(agent + ": line 287");
                 String actionStr = action.toString();
+                System.out.println(agent + ": line 289");
                 String argStr = actionStr.substring(actionStr.indexOf("(")+1, actionStr.indexOf(")"));
+                System.out.println(agent + ": line 291");
                 String newArgStr = argStr.replace(",", ";");
+                System.out.println(agent + ": line 293");
                 try {
+                    System.out.println(agent + ": line 295");
                     probLog.write(String.format("%d;%s\n", move-1, newArgStr));
+                    System.out.println(agent + ": line 297");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                System.out.println(agent + ": line 301");
                 result = true;
+                System.out.println(agent + ": line 303");
                 break;
 
             default:

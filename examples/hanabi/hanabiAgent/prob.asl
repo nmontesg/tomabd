@@ -16,6 +16,7 @@
                 ?disclosed_cards(IC, IR, Me, _, N1);
                 ?cards_per_rank(IR, N2);
                 +possible_cards(S, IC, IR, N2-N1);
+                // .log(info, "added ", possible_cards(S, IC, IR, N2-N1));
             }
         }
     }
@@ -26,7 +27,8 @@
 // number by one in all other slots
 @updateProbabilityDistributionsUponReveal[domain(hanabi),atomic]
 +!update_probability_distributions_upon_reveal(Slot) : .my_name(Me)
-    <- ?has_card_color(Me, Slot, Color);
+    <- .perceive;
+    ?has_card_color(Me, Slot, Color);
     ?has_card_rank(Me, Slot, Rank);
 
     .findall(C, color(C), Colors);
@@ -39,6 +41,7 @@
                 for ( .member(IR, Ranks) ) {
                     if (possible_cards(S, IC, IR, N) & N > 0) {
                         -+possible_cards(S, IC, IR, N-1);
+                        // .log(info, "replaced ", possible_cards(S, IC, IR, N-1));
                     }
                 }
             }
@@ -57,7 +60,8 @@
         for ( .member(IR, Ranks) ) {
             ?disclosed_cards(IC, IR, Me, _, N1);
             ?cards_per_rank(IR, N2);
-            -+possible_cards(S, IC, IR, N2-N1);
+            -+possible_cards(Slot, IC, IR, N2-N1);
+            // .log(info, "reset ", possible_cards(Slot, IC, IR, N2-N1));
         }
     }.
 
@@ -66,13 +70,15 @@
 // card in all my slots
 @updateProbabilityDistributionsAfterReplacement[domain(hanabi),atomic]
 +!update_probability_distributions_after_replacement(Slot) [source(Agent)] : .my_name(Me)
-    <- ?has_card_color(Agent, Slot, Color);
+    <- .perceive;
+    ?has_card_color(Agent, Slot, Color);
     ?has_card_rank(Agent, Slot, Rank);
     .findall(possible_cards(S, Color, Rank, N), possible_cards(S, Color, Rank, N), L);
     for ( .member(M, L) ) {
         M =.. [possible_cards, [S, Color, Rank, N], _];
         if ( Num > 0 ) {
             -+possible_cards(S, Color, Rank, N-1);
+            // .log(info, "replaced ", possible_cards(S, Color, Rank, N-1));
         }
     }.
 
@@ -98,4 +104,3 @@
     // TODO: look for abductive explanations
     // if there is some abductive explanation, update the probability distributions
     // accordingly and write in the log with true
-    
