@@ -1,6 +1,6 @@
 // Unnamed variables are not allowed in action(Agent, Action) selection rules
 
-action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priority(1.0)] :-
+action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi), priority(1.0)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -12,7 +12,7 @@ action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priori
     unhinted(Color, 5) &
     common_slots(HintedPlayer, 5, SlotList).
 
-action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priority(1.1)] :-
+action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi), priority(1.1)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -24,7 +24,7 @@ action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priori
     unhinted(Color, 5) &
     common_slots(HintedPlayer, 5, SlotList).
 
-action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priority(1.2)] :-
+action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi), priority(1.2)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -36,7 +36,7 @@ action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priori
     unhinted(Color, 5) &
     common_slots(HintedPlayer, 5, SlotList).
 
-action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priority(1.3)] :-
+action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi), priority(1.3)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -50,7 +50,7 @@ action(Agent, give_hint(HintedPlayer, rank, 5, SlotList)) [domain(hanabi),priori
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),priority(2.0)] :-
+action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi), priority(2.0)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -62,7 +62,7 @@ action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),p
     useful(Color, Rank) &
     common_slots(HintedPlayer, Color, SlotList).
 
-action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),priority(2.1)] :-
+action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi), priority(2.1)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -74,7 +74,7 @@ action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),p
     useful(Color, Rank) &
     common_slots(HintedPlayer, Color, SlotList).
 
-action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),priority(2.2)] :-
+action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi), priority(2.2)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -86,7 +86,7 @@ action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),p
     useful(Color, Rank) &
     common_slots(HintedPlayer, Color, SlotList).
 
-action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),priority(2.3)] :-
+action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi), priority(2.3)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -100,7 +100,7 @@ action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),p
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),priority(3.0)] :-
+action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi), priority(3.0)] :-
     my_name(Agent) &
     player(HintedPlayer) &
     available_info_tokens &
@@ -112,7 +112,7 @@ action(Agent, give_hint(HintedPlayer, color, Color, SlotList)) [domain(hanabi),p
     playable(Color, Rank) &
     unhinted(Color, Rank).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(3.1)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(3.1)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -123,7 +123,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     common_slots(Player, Rank, SlotList) &
     focus(Player, SlotList, Focus).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(3.2)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(3.2)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -134,7 +134,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     common_slots(Player, Color, SlotList) &
     focus(Player, SlotList, Focus).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(3.3)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(3.3)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -145,7 +145,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     common_slots(Player, Rank, SlotList) &
     focus(Player, SlotList, Focus).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(3.4)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(3.4)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -156,7 +156,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     common_slots(Player, Color, SlotList) &
     focus(Player, SlotList, Focus).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(3.5)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(3.5)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -167,7 +167,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     common_slots(Player, Rank, SlotList) &
     focus(Player, SlotList, Focus).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(3.6)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(3.6)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -178,7 +178,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     common_slots(Player, Color, SlotList) &
     focus(Player, SlotList, Focus).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(3.7)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(3.7)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -191,7 +191,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, play_card(Slot)) [domain(hanabi),priority(4.0)] :-
+action(Agent, play_card(Slot)) [domain(hanabi), priority(4.0)] :-
     player(Agent) &
     my_name(Agent) & slot(Slot) &
     has_card_color(Agent, Slot, Color) &
@@ -200,7 +200,7 @@ action(Agent, play_card(Slot)) [domain(hanabi),priority(4.0)] :-
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(5.0)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(5.0)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -211,7 +211,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     playable(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(5.1)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(5.1)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -222,7 +222,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     playable(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(5.2)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(5.2)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -233,7 +233,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     playable(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(5.3)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(5.3)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -244,7 +244,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     playable(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(5.4)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(5.4)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -255,7 +255,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     playable(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(5.5)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(5.5)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -266,7 +266,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     playable(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(5.6)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(5.6)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -277,7 +277,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     playable(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(5.7)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(5.7)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -290,7 +290,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, discard_card(Slot)) [domain(hanabi),priority(6.0)] :-
+action(Agent, discard_card(Slot)) [domain(hanabi), priority(6.0)] :-
     player(Agent) &
     spent_info_tokens &
     my_name(Agent) &
@@ -300,7 +300,7 @@ action(Agent, discard_card(Slot)) [domain(hanabi),priority(6.0)] :-
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, discard_card(C)) [domain(hanabi),priority(7.0)] :-
+action(Agent, discard_card(C)) [domain(hanabi), priority(7.0)] :-
     player(Agent) &
     spent_info_tokens &
     my_name(Agent) &
@@ -308,7 +308,7 @@ action(Agent, discard_card(C)) [domain(hanabi),priority(7.0)] :-
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(8.0)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(8.0)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -320,7 +320,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     useful(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(8.1)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(8.1)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -332,7 +332,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     useful(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(8.2)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(8.2)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -344,7 +344,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     useful(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(8.3)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(8.3)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -356,7 +356,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     useful(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(8.4)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(8.4)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -368,7 +368,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     useful(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(8.5)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(8.5)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -380,7 +380,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     useful(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(8.6)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(8.6)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -392,7 +392,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     useful(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(8.7)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(8.7)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -406,7 +406,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(9.0)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(9.0)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -417,7 +417,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     useful(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(9.1)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(9.1)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -428,7 +428,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     useful(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(9.2)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(9.2)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -439,7 +439,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     useful(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(9.3)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(9.3)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -450,7 +450,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     useful(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(9.4)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(9.4)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -461,7 +461,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     useful(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(9.5)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(9.5)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -472,7 +472,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     useful(Color, Rank) &
     common_slots(Player, Rank, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(9.6)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(9.6)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -483,7 +483,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     useful(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(9.7)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(9.7)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -496,7 +496,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(10.0)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(10.0)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 1) &
@@ -507,7 +507,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     playable(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(10.1)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(10.1)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 2) &
@@ -518,7 +518,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     playable(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(10.2)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(10.2)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 3) &
@@ -529,7 +529,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     playable(Color, Rank) &
     common_slots(Player, Color, SlotList).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(10.3)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(10.3)] :-
     player(Agent) &
     available_info_tokens &
     turns_ahead(Player, 4) &
@@ -542,7 +542,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, discard_card(Slot)) [domain(hanabi),priority(11.0)] :-
+action(Agent, discard_card(Slot)) [domain(hanabi), priority(11.0)] :-
     player(Agent) &
     spent_info_tokens &
     my_name(Agent) &
@@ -550,7 +550,7 @@ action(Agent, discard_card(Slot)) [domain(hanabi),priority(11.0)] :-
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(12.0)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.0)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 1) &
@@ -562,7 +562,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     common_slots(Player, Color, SlotList) &
     focus(Player, SlotList, Slot).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(12.1)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.1)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 1) &
@@ -574,7 +574,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     common_slots(Player, Rank, SlotList) &
     focus(Player, SlotList, Slot).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(12.2)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.2)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 2) &
@@ -586,7 +586,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     common_slots(Player, Color, SlotList) &
     focus(Player, SlotList, Slot).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(12.3)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.3)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 2) &
@@ -598,7 +598,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     common_slots(Player, Rank, SlotList) &
     focus(Player, SlotList, Slot).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(12.4)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.4)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 3) &
@@ -610,7 +610,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     common_slots(Player, Color, SlotList) &
     focus(Player, SlotList, Slot).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(12.5)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.5)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 3) &
@@ -622,7 +622,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
     common_slots(Player, Rank, SlotList) &
     focus(Player, SlotList, Slot).
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priority(12.6)] :-
+action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.6)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 4) &
@@ -634,7 +634,7 @@ action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi),priorit
     common_slots(Player, Color, SlotList) &
     focus(Player, SlotList, Slot).
 
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(12.7)] :-
+action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.7)] :-
     player(Agent) &
     num_info_tokens(Tokens) & max_info_tokens(Tokens) &
     turns_ahead(Player, 4) &
@@ -648,7 +648,7 @@ action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi),priority(
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, discard_card(Slot)) [domain(hanabi),priority(13.0)] :-
+action(Agent, discard_card(Slot)) [domain(hanabi), priority(13.0)] :-
     my_name(Agent) &
     max_info_tokens(Max) &
     num_info_tokens(Tokens) &
@@ -656,7 +656,7 @@ action(Agent, discard_card(Slot)) [domain(hanabi),priority(13.0)] :-
     ordered_slots(Agent, OrdSlots) &
     oldest_slot(Agent, OrdSlots, Slot).
 
-action(Agent, play_card(Slot)) [domain(hanabi),priority(13.1)] :-
+action(Agent, play_card(Slot)) [domain(hanabi), priority(13.1)] :-
     my_name(Agent) &
     max_info_tokens(Max) &
     num_info_tokens(Max) &

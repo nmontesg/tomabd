@@ -1,4 +1,0 @@
-move;player;action_functor;actions_args;hints;score
-1;alice;give_hint;bob, color, blue, [1,3];1;0
-2;bob;give_hint;alice, color, yellow, [1,3,4];2;0
-3;alice;give_hint;bob, rank, 5, [2];3;0

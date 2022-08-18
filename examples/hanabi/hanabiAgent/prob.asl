@@ -1,106 +1,112 @@
-@initializeProbabilityDistributions[domain(hanabi),atomic]
+@initializeProbabilityDistributions[domain(hanabi), atomic]
 +!initialize_probability_distributions : .my_name(Me)
     <- .perceive;
-    .findall(C, color(C), Colors);
-    .findall(R, rank(R), Ranks);
-
-    ?num_total_cards(AllCards);
-    ?cards_per_player(NC);
-    UnknownCards = AllCards-NC;
+    .findall(x(S, C, R), slot(S) & color(C) & rank(R), LX);
 
     // initially all probability distributions are equal for all slots
     // because they only consider information on the other player's cards
-    for ( .range(S, 1, NC) ) {
-        for ( .member(IC, Colors) ) {
-            for ( .member(IR, Ranks) ) {
-                ?disclosed_cards(IC, IR, Me, _, N1);
-                ?cards_per_rank(IR, N2);
-                +possible_cards(S, IC, IR, N2-N1);
-                // .log(info, "added ", possible_cards(S, IC, IR, N2-N1));
-            }
-        }
+    for ( .member(M, LX) ) {
+        M = x(S, C, R);
+        ?disclosed_cards(C, R, Me, _, N1);
+        ?cards_per_rank(R, N2);
+        +possible_cards(S, C, R, N2-N1);
     }
-    !log_all_distributions(false).
+    hanabiAgent.log_prob_dist(false).
 
 
 // when I reveal a card and learn of its identity, I have to diminish its
 // number by one in all other slots
-@updateProbabilityDistributionsUponReveal[domain(hanabi),atomic]
+@updateProbabilityDistributionsUponReveal[domain(hanabi), atomic]
 +!update_probability_distributions_upon_reveal(Slot) : .my_name(Me)
     <- .perceive;
     ?has_card_color(Me, Slot, Color);
     ?has_card_rank(Me, Slot, Rank);
 
-    .findall(C, color(C), Colors);
-    .findall(R, rank(R), Ranks);
-    ?cards_per_player(NC);
+    .findall(
+        possible_cards(S, Color, Rank, N),
+        possible_cards(S, Color, Rank, N) & slot(S) & S \== Slot & N > 0,
+        LB
+    );
 
-    for ( .range(S, 1, NC) ) {
-        if (S \== Slot) {
-            for ( .member(IC, Colors) ) {
-                for ( .member(IR, Ranks) ) {
-                    if (possible_cards(S, IC, IR, N) & N > 0) {
-                        -+possible_cards(S, IC, IR, N-1);
-                        // .log(info, "replaced ", possible_cards(S, IC, IR, N-1));
-                    }
-                }
-            }
-        }
+    for ( .member(M, LB) ) {
+        M = possible_cards(Sl, Color, Rank, Num);
+        -possible_cards(Sl, Color, Rank, Num);
+        +possible_cards(Sl, Color, Rank, Num-1);
     }.
 
 
-// when I replace a card, reset its probability distribution
-@resetProbabilityDistribution[domain(hanabi),atomic]
-+!reset_probability_distribution(Slot) : my_name(Me)
-    <- .perceive;
-    .findall(C, color(C), Colors);
-    .findall(R, rank(R), Ranks);
 
-    for ( .member(IC, Colors) ) {
-        for ( .member(IR, Ranks) ) {
-            ?disclosed_cards(IC, IR, Me, _, N1);
-            ?cards_per_rank(IR, N2);
-            -+possible_cards(Slot, IC, IR, N2-N1);
-            // .log(info, "reset ", possible_cards(Slot, IC, IR, N2-N1));
-        }
+// when I replace a card, reset its probability distribution
+@resetProbabilityDistribution[domain(hanabi), atomic]
++!reset_probability_distribution(Slot) : my_name(Me)
+    <- .abolish(possible_cards(Slot, _, _, _));
+    .perceive;
+    .findall(x(C, R), color(C) & rank(R), LX);
+
+    for ( .member(M, LX) ) {
+        M = x(C, R);
+        ?disclosed_cards(C, R, Me, Slot, N1);
+        ?cards_per_rank(R, N2);
+        +possible_cards(Slot, C, R, N2-N1);
     }.
 
 
 // when another player replaces a card, I reduce by one the possibility of that
 // card in all my slots
-@updateProbabilityDistributionsAfterReplacement[domain(hanabi),atomic]
+@updateProbabilityDistributionsAfterReplacement[domain(hanabi), atomic]
 +!update_probability_distributions_after_replacement(Slot) [source(Agent)] : .my_name(Me)
     <- .perceive;
     ?has_card_color(Agent, Slot, Color);
     ?has_card_rank(Agent, Slot, Rank);
-    .findall(possible_cards(S, Color, Rank, N), possible_cards(S, Color, Rank, N), L);
+    .findall(
+        possible_cards(S, Color, Rank, N),
+        possible_cards(S, Color, Rank, N) & N > 0,
+        L
+    );
     for ( .member(M, L) ) {
-        M =.. [possible_cards, [S, Color, Rank, N], _];
-        if ( Num > 0 ) {
-            -+possible_cards(S, Color, Rank, N-1);
-            // .log(info, "replaced ", possible_cards(S, Color, Rank, N-1));
-        }
+        M = possible_cards(S, Color, Rank, N);
+        -possible_cards(S, Color, Rank, N);
+        +possible_cards(S, Color, Rank, N-1);
     }.
 
 
-
-// write all the probability distributions in the logger
-@logAllDistributionsMe[domain(hanabi),atomic]
-+!log_all_distributions(Bool) [source(self)]
-    <- .findall(possible_cards(S, C, R, N), possible_cards(S, C, R, N), L);
-    for ( .member(M, L) ) {
-        M =.. [possible_cards, [Slot, Color, Rank, Num], _];
-        log_probability(Slot, Color, Rank, Num, Bool);
+@updateExplicitHintInfo1[domain(hanabi), atomic]
++!update_probability_explicit_hint(HintInfo) : .my_name(Me) & HintInfo = has_card_color(Me, Slot, Color) [source(hint)]
+    <- .findall(x(C, R), color(C) & C \== Color & rank(R), LX);
+    for ( .member(M, LX) ) {
+        M = x(C, R);
+        ?possible_cards(Slot, C, R, N);
+        -possible_cards(Slot, C, R, N);
+        +possible_cards(Slot, C, R, 0);
     }.
 
-@logAllDistributionsOther[domain(hanabi),atomic]
-+!log_all_distributions(Bool) [source(Other)] : .my_name(Me) & Me \== Other
-    <- .findall(possible_cards(S, C, R, N), possible_cards(S, C, R, N), L);
-    for ( .member(M, L) ) {
-        M =.. [possible_cards, [Slot, Color, Rank, Num], _];
-        log_probability(Slot, Color, Rank, Num, Bool);
+
+@updateExplicitHintInfo2[domain(hanabi), atomic]
++!update_probability_explicit_hint(HintInfo) : .my_name(Me) & HintInfo = ~has_card_color(Me, Slot, Color) [source(hint)]
+    <- .findall(R, rank(R), LR);
+    for ( .member(R, LR) ) {
+        ?possible_cards(Slot, Color, R, N);
+        -possible_cards(Slot, Color, R, N);
+        +possible_cards(Slot, Color, R, 0);
     }.
 
-    // TODO: look for abductive explanations
-    // if there is some abductive explanation, update the probability distributions
-    // accordingly and write in the log with true
+
+@updateExplicitHintInfo3[domain(hanabi), atomic]
++!update_probability_explicit_hint(HintInfo) : .my_name(Me) & HintInfo = has_card_rank(Me, Slot, Rank) [source(hint)]
+    <- .findall(x(C, R), color(C) & rank(R) & R \== Rank, LX);
+    for ( .member(M, LX) ) {
+        M = x(C, R);
+        ?possible_cards(Slot, C, R, N);
+        -possible_cards(Slot, C, R, N);
+        +possible_cards(Slot, C, R, 0);
+    }.
+
+
+@updateExplicitHintInfo4[domain(hanabi), atomic]
++!update_probability_explicit_hint(HintInfo) : .my_name(Me) & HintInfo = ~has_card_rank(Me, Slot, Rank) [source(hint)]
+    <- .findall(C, color(C), LC);
+    for ( .member(C, LC) ) {
+        ?possible_cards(Slot, C, Rank, N);
+        -possible_cards(Slot, C, Rank, N);
+        +possible_cards(Slot, C, Rank, 0);
+    }.

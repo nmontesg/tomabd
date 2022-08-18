@@ -35,7 +35,6 @@ domain(hanabi).
 
 /* ----------------------- General turn-taking plans ----------------------- */
 
-// TODO: log the tomabd performance from the ASL code
 
 all_minus_me(L) [domain(hanabi)] :-
     .all_names(L0) & .my_name(Me) & .delete(Me, L0, L1) & .sort(L1, L).
@@ -43,9 +42,20 @@ all_minus_me(L) [domain(hanabi)] :-
 
 @takeTurn[domain(hanabi)]
 +player_turn(Me) : .my_name(Me) // & .my_name(mary)
-    <- !select_action;
+    <-
+    !select_action;
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
-    !perform_action.
+    !perform_action;
+    .broadcast(achieve, log_distributions);
+    hanabiAgent.log_prob_dist(false);
+    finish_turn.
+
+@logProbabilityDistributions[domain(hanabi), atomic]
++!log_distributions
+    <- hanabiAgent.log_prob_dist(false).
+    // TODO: if there are abductive explanations:
+    // 1. update the probability distributions
+    // 2. log them with true argument
 
 
 @selectAction[domain(hanabi),atomic]
@@ -77,43 +87,11 @@ all_minus_me(L) [domain(hanabi)] :-
 +!kqml_received(KQML_Sender_Var, hint, KQML_Content_Var, KQML_MsgId) : .my_name(Me)
     <- .add_annot(KQML_Content_Var, source(hint), H);
     +H;
-    .
-
-    // TODO: update probabilities with the *explicit* information
-    // .findall(C, color(C), Colors);
-    // .findall(R, rank(R), Ranks);
-
-    // if ( KQML_Content_Var = has_card_color(Me, Slot, Color) ) {
-    //     for ( .member(IC, Colors) ) {
-    //         if ( IC \== Color ) {
-    //             for ( .member(IR, Ranks) ) {
-    //                 -+possible_cards(Slot, IC, IR, 0);
-    //             }
-    //         }
-    //     }
-    // } elif ( KQML_Content_Var = ~has_card_color(Me, Slot, Color) ) {
-    //     for ( .member(IR, Ranks) ) {
-    //         -+possible_cards(Slot, Color, IR, 0);
-    //     }
-    // } elif ( KQML_Content_Var = has_card_rank(Me, Slot, Rank) ) {
-    //     for ( .member(IR, Ranks) ) {
-    //         if ( IR \== Rank ) {
-    //             for ( .member(IC, Colors) ) {
-    //                 -+possible_cards(Slot, IC, IR, 0);
-    //             }
-    //         }
-    //     }
-    // } elif ( KQML_Content_Var = ~has_card_rank(Me, Slot, Rank) ) {
-    //     for ( .member(IC, Colors) ) {
-    //         -+possible_cards(Slot, IC, Rank, 0);
-    //     }
-    // }.
+    !update_probability_explicit_hint(KQML_Content_Var).
 
 
 @kqmlReceivedPublicAction[atomic,domain(hanabi)]
-+!kqml_received(KQML_Sender_Var, publicAction, Action, KQML_MsgId)
-
-    : .my_name(Me)
++!kqml_received(KQML_Sender_Var, publicAction, Action, KQML_MsgId) : .my_name(Me)
 
     <-
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
@@ -136,6 +114,9 @@ all_minus_me(L) [domain(hanabi)] :-
         KQML_Sender_Var, Action, ActExpls, ObsExpls
     );
     // TODO: log
+    if ( .length(ObsExpls, Len) & Len > 0 ) {
+        .log(info, ObsExpls);
+    }
 
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
         .concat("has_card_", Mode, String);

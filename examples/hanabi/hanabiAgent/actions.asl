@@ -25,7 +25,7 @@ give_hint(P, color, C, SL) :-
 // also when a card is replaced it should have its probability distribution
 // reset
 
-@playCard[atomic,domain(hanabi)]
+@playCard[domain(hanabi), atomic]
 +!play_card(Slot) : my_name(Me)
     <- reveal_card(Slot);
     !update_probability_distributions_upon_reveal(Slot);
@@ -36,15 +36,10 @@ give_hint(P, color, C, SL) :-
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
     !update_slots(took_card(Slot));
-    !replace_card(Slot);
-
-    .broadcast(achieve, log_all_distributions(false));
-    !log_all_distributions(false);
-
-    finish_turn.
+    !replace_card(Slot).
 
     
-@discardCard[atomic,domain(hanabi)]
+@discardCard[domain(hanabi), atomic]
 +!discard_card(Slot) : my_name(Me)
     <- reveal_card(Slot);
     !update_probability_distributions_upon_reveal(Slot);
@@ -55,15 +50,10 @@ give_hint(P, color, C, SL) :-
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
     !update_slots(took_card(Slot));
-    !replace_card(Slot);
-
-    .broadcast(achieve, log_all_distributions(false));
-    !log_all_distributions(false);
-
-    finish_turn.
+    !replace_card(Slot).
 
 
-@giveHint[atomic,domain(hanabi)]
+@giveHint[domain(hanabi), atomic]
 +!give_hint(HintedPlayer, Mode, Value, SlotList) : my_name(Me)
     <- .concat("has_card_", Mode, String);
     .term2string(Term, String);
@@ -78,15 +68,10 @@ give_hint(P, color, C, SL) :-
             +(~Belief);
         }
     }
-    spend_info_token(HintedPlayer, Mode, Value, SlotList);
-
-    .broadcast(achieve, log_all_distributions(false));
-    !log_all_distributions(false);
-
-    finish_turn.
+    spend_info_token(HintedPlayer, Mode, Value, SlotList).
 
 
-@replaceCard1[atomic,domain(hanabi)]
+@replaceCard1[domain(hanabi), atomic]
 +!replace_card(Slot) : num_cards_deck(D) & D > 0
     <- draw_random_card(Slot);
     .broadcast(achieve, update_slots(placed_card(Slot)));
@@ -96,16 +81,15 @@ give_hint(P, color, C, SL) :-
     !reset_probability_distribution(Slot).
 
 
-@replaceCard2[atomic,domain(hanabi)]
+@replaceCard2[domain(hanabi), atomic]
 +!replace_card(Slot) : num_cards_deck(0) & my_name(Me)
     <- .abolish(has_card_color(Me, Slot, _));
     .abolish(~has_card_color(Me, Slot, _));
     .abolish(has_card_rank(Me, Slot, _));
-    .abolish(~has_card_rank(Me, Slot, _));
-    .abolish(possible_cards(Slot, _, _, _)).
+    .abolish(~has_card_rank(Me, Slot, _)).
 
 
-@updateSlots1[atomic,domain(hanabi)]
+@updateSlots1[domain(hanabi), atomic]
 +!update_slots(took_card(Slot)) [source(self)] : my_name(Me)
     <- ?ordered_slots(Me, L);
     .nth(N, L, Slot);
@@ -114,7 +98,7 @@ give_hint(P, color, C, SL) :-
     +ordered_slots(Me, Lprime).
 
 
-@updateSlots2[atomic,domain(hanabi)]
+@updateSlots2[domain(hanabi), atomic]
 +!update_slots(took_card(Slot)) [source(Player)] : Player \== self
     <- ?ordered_slots(Player, L);
     .nth(N, L, Slot);
@@ -123,7 +107,7 @@ give_hint(P, color, C, SL) :-
     +ordered_slots(Player, Lprime).
 
 
-@updateSlots3[atomic,domain(hanabi)]
+@updateSlots3[domain(hanabi), atomic]
 +!update_slots(placed_card(Slot)) [source(self)] : my_name(Me)
     <- ?ordered_slots(Me, L);
     .concat(L, [Slot], Lprime);
@@ -131,7 +115,7 @@ give_hint(P, color, C, SL) :-
     +ordered_slots(Me, Lprime).
 
 
-@updateSlots4[atomic,domain(hanabi)]
+@updateSlots4[domain(hanabi), atomic]
 +!update_slots(placed_card(Slot)) [source(Player)] : Player \== self
     <- ?ordered_slots(Player, L);
     .concat(L, [Slot], Lprime);
@@ -139,7 +123,7 @@ give_hint(P, color, C, SL) :-
     +ordered_slots(Player, Lprime).
 
 
-@removeHintInfo[atomic,domain(hanabi)]
+@removeHintInfo[domain(hanabi), atomic]
 +!remove_hint_info(Player, Slot)
     <- .abolish(has_card_color(Player, Slot, _) [source(hint)]);
     .abolish(~has_card_color(Player, Slot, _) [source(hint)]);
