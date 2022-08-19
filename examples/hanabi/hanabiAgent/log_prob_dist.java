@@ -32,7 +32,7 @@ public class log_prob_dist extends DefaultInternalAction {
             String seedStr = ((NumberTermImpl) queryU.get("S")).toString();
             String moveStr = ((NumberTermImpl) queryU.get("M")).toString();
 
-            String fileName = String.format("results/hanabi_%s_%s_%s_%s_%s.csv", numPlayersStr, seedStr, agName, moveStr, suffix);
+            String fileName = String.format("results_%s_%s/%s_%s_%s.csv", numPlayersStr, seedStr, agName, moveStr, suffix);
             File file = new File(fileName);
             file.createNewFile();
             FileWriter fw = new FileWriter(fileName);

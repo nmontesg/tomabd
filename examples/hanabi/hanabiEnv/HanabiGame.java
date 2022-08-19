@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.Buffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -187,7 +188,8 @@ public class HanabiGame extends Environment {
 
         // set up logger for the overall evolution of the game
         try {
-            String evolutionFileName = String.format("results/hanabi_%d_%d_evolution.csv", numPlayers, seed);
+            Files.createDirectories(Paths.get(String.format("results_%d_%d", numPlayers, seed)));
+            String evolutionFileName = String.format("results_%d_%d/evolution.csv", numPlayers, seed);
             evolutionLogger = new File(evolutionFileName);
             evolutionLogger.createNewFile();
             FileWriter evolutionWriter = new FileWriter(evolutionFileName);

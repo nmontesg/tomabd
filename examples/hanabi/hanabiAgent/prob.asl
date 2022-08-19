@@ -53,12 +53,14 @@
 
 // when another player replaces a card, I reduce by one the possibility of that
 // card in all my slots
-@updateProbabilityDistributionsAfterReplacement[domain(hanabi), atomic]
-+!update_probability_distributions_after_replacement(Slot) [source(Agent)] : .my_name(Me)
-    <- .perceive;
-    ?has_card_color(Agent, Slot, Color);
-    ?has_card_rank(Agent, Slot, Rank);
-    .findall(
+@updateProbabilityDistributionsAfterReplacement[domain(hanabi)]
++!update_probability_distributions_after_replacement(Slot) [source(Agent)]
+    <- .wait(has_card_color(Agent, Slot, _) [source(percept)] & has_card_rank(Agent, Slot, _) [source(percept)]);
+    !update_after_perception(Agent, Slot).
+
+@updateAfterPerception[domain(hanabi), atomic]
++!update_after_perception(Agent, Slot) :  has_card_color(Agent, Slot, Color) & has_card_rank(Agent, Slot, Rank)
+    <- .findall(
         possible_cards(S, Color, Rank, N),
         possible_cards(S, Color, Rank, N) & N > 0,
         L
@@ -70,6 +72,7 @@
     }.
 
 
+// update of probability distributions when I receive a hint about my cards
 @updateExplicitHintInfo1[domain(hanabi), atomic]
 +!update_probability_explicit_hint(HintInfo) : .my_name(Me) & HintInfo = has_card_color(Me, Slot, Color) [source(hint)]
     <- .findall(x(C, R), color(C) & C \== Color & rank(R), LX);
@@ -110,3 +113,8 @@
         -possible_cards(Slot, C, Rank, N);
         +possible_cards(Slot, C, Rank, 0);
     }.
+
+
+// when I receive a hint about someone else's cards: do nothing
+@updateExplicitHintInfo5[domain(hanabi), atomic]
++!update_probability_explicit_hint(HintInfo) : .my_name(Me) & HintInfo =.. [_, [Player, Slot, Value], [source(hint)]] & Player \== Me.
