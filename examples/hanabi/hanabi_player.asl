@@ -91,10 +91,19 @@ all_minus_me(L) [domain(hanabi)] :-
     .broadcast(publicAction, Action).
 
 
-@selectActionFailure[domain(hanabi),atomic]
--!select_action : .my_name(Me)
+@selectActionFailure1[domain(hanabi),atomic]
+-!select_action : .my_name(Me) & spent_info_tokens
     <- ?ordered_slots(Me, [H|_]);
     Action = discard_card(H);
+    .log(info, Action, " (fail) ");
+    +selected_action(Action);
+    .broadcast(publicAction, Action).
+
+
+@selectActionFailure2[domain(hanabi),atomic]
+-!select_action : .my_name(Me) & not spent_info_tokens
+    <- ?ordered_slots(Me, [H|_]);
+    Action = play_card(H);
     .log(info, Action, " (fail) ");
     +selected_action(Action);
     .broadcast(publicAction, Action).
@@ -138,7 +147,7 @@ all_minus_me(L) [domain(hanabi)] :-
         [],
         KQML_Sender_Var, Action, ActExpls, ObsExpls
     );
-    // TODO: log
+    
     if ( .length(ObsExpls, Len) & Len > 0 ) {
         +latest_abductive_explanation(ObsExpls);
     }

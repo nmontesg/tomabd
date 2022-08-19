@@ -15,15 +15,6 @@ give_hint(P, color, C, SL) :-
 // other players have to abduce with the state of the game as it is when
 // the action is selected, i.e. BEFORE it is performed
 
-// TODO: after revealing a card, I should update the possible_cards:
-// I have to update on the basis of the NEW information that I am getting
-// +has_card_color(Me, Slot, Color) <- ...
-// +has_card_rank(Me, Slot, Rank) <- ...
-// both when I learn something NEW about me and about the other players
-// both through observation (as in when playing or discarding a card)
-// or getting new information through hints
-// also when a card is replaced it should have its probability distribution
-// reset
 
 @playCard[domain(hanabi), atomic]
 +!play_card(Slot) : my_name(Me)
@@ -129,3 +120,7 @@ give_hint(P, color, C, SL) :-
     .abolish(~has_card_color(Player, Slot, _) [source(hint)]);
     .abolish(has_card_rank(Player, Slot, _) [source(hint)]);
     .abolish(~has_card_rank(Player, Slot, _) [source(hint)]).
+
+-!Goal : seed(Seed)
+    <- .log(info, "\n\npremature stop of game with seed ", Seed);
+    .stopMAS.
