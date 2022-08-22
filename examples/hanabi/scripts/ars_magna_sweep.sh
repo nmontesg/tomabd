@@ -2,7 +2,7 @@
 
 # sbatch options
 #SBATCH --job-name=hanabi_runs
-#SBATCH --time=00-12:00:00
+#SBATCH --time=00-24:00:00
 #SBATCH --mem-per-cpu=2G
 
 #SBATCH --output=/home/nmontes/hanabi_runs/%x-%j.log

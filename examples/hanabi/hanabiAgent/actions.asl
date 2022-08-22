@@ -120,7 +120,3 @@ give_hint(P, color, C, SL) :-
     .abolish(~has_card_color(Player, Slot, _) [source(hint)]);
     .abolish(has_card_rank(Player, Slot, _) [source(hint)]);
     .abolish(~has_card_rank(Player, Slot, _) [source(hint)]).
-
--!Goal : seed(Seed)
-    <- .log(info, "\n\npremature stop of game with seed ", Seed);
-    .stopMAS.

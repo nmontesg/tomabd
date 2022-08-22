@@ -9,7 +9,7 @@ domain(hanabi).
 
 !get_ready.
 
-@getReady[atomic,domain(hanabi)]
+@getReady[domain(hanabi), atomic]
 +!get_ready
 
     : seed(Seed) & .my_name(Me) & num_players(NP) & cards_per_player(N)
@@ -41,7 +41,7 @@ all_minus_me(L) [domain(hanabi)] :-
 
 
 @takeTurn[domain(hanabi)]
-+player_turn(Me) : .my_name(Me) // & .my_name(mary)
++player_turn(Me) : .my_name(Me)
     <-
     !select_action;
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
@@ -51,39 +51,41 @@ all_minus_me(L) [domain(hanabi)] :-
     finish_turn.
 
 
-@logProbabilityDistributions[domain(hanabi), atomic]
-+!log_distributions
+@logProbabilityDistributions1[domain(hanabi), atomic]
++!log_distributions : not latest_abductive_explanation(_)
+    <- hanabiAgent.log_prob_dist(false).
+
+@logProbabilityDistributions2[domain(hanabi), atomic]
++!log_distributions : latest_abductive_explanation(ObsExpl)
     <- hanabiAgent.log_prob_dist(false);
-    if ( latest_abductive_explanation(ObsExpl) ) {
-        // assert that all explanations are about either colour or rank
-        .setof(Pred, .member(M, ObsExpl) & .member(F, M) & F =.. [Pred, _, _], LP);
-        LP = [Predicate];
+    // assert that all explanations are about either colour or rank
+    .setof(Pred, .member(M, ObsExpl) & .member(F, M) & F =.. [Pred, _, _], LP);
+    LP = [Predicate];
 
-        // assert that all explanations are about one slot
-        .setof(S, slot(S) & .member(M, ObsExpl) & .member(F, M) & F =.. [_, [Me, S, _], _], LS);
-        LS = [Slot];
+    // assert that all explanations are about one slot
+    .setof(S, slot(S) & .member(M, ObsExpl) & .member(F, M) & F =.. [_, [Me, S, _], _], LS);
+    LS = [Slot];
 
-        // find the color/rank values
-        .setof(V, .member(M, ObsExpl) & .member(F, M) & F =.. [_, [Me, _, V], _], LV);
+    // find the color/rank values
+    .setof(V, .member(M, ObsExpl) & .member(F, M) & F =.. [_, [Me, _, V], _], LV);
 
-        if ( Pred = has_card_color ) {
-            .findall(possible_cards(Slot, C, R, Num), possible_cards(Slot, C, R, Num) & color(C) & not .member(C, LV) & Num > 0, L);
-        } elif ( Pred = has_card_rank ) {
-            .findall(possible_cards(Slot, C, R, Num), possible_cards(Slot, C, R, Num) & rank(R) & not .member(R, LV) & Num > 0, L);
-        }
-        
-        for ( .member(M, L) ) {
-            M = possible_cards(S, C, R, Num);
-            -possible_cards(S, C, R, Num);
-            +possible_cards(S, C, R, 0);
-        }
+    if ( Predicate = has_card_color ) {
+        .findall(possible_cards(Slot, C, R, Num), possible_cards(Slot, C, R, Num) & not .member(C, LV) & Num > 0, L);
+    } elif ( Predicate = has_card_rank ) {
+        .findall(possible_cards(Slot, C, R, Num), possible_cards(Slot, C, R, Num) & not .member(R, LV) & Num > 0, L);
+    }
+    
+    for ( .member(M, L) ) {
+        M = possible_cards(S, C, R, Num);
+        -possible_cards(S, C, R, Num);
+        +possible_cards(S, C, R, 0);
+    }
 
-        .abolish(latest_abductive_explanation(_));
-        hanabiAgent.log_prob_dist(true);
-    }.
+    .abolish(latest_abductive_explanation(_));
+    hanabiAgent.log_prob_dist(true).
 
 
-@selectAction[domain(hanabi),atomic]
+@selectAction[domain(hanabi), atomic]
 +!select_action : .my_name(Me)
     <- tomabd.agent.select_action(Action, Priority);
     .log(info, Action, " (", Priority, ")");
@@ -91,7 +93,7 @@ all_minus_me(L) [domain(hanabi)] :-
     .broadcast(publicAction, Action).
 
 
-@selectActionFailure1[domain(hanabi),atomic]
+@selectActionFailure1[domain(hanabi), atomic]
 -!select_action : .my_name(Me) & spent_info_tokens
     <- ?ordered_slots(Me, [H|_]);
     Action = discard_card(H);
@@ -100,7 +102,7 @@ all_minus_me(L) [domain(hanabi)] :-
     .broadcast(publicAction, Action).
 
 
-@selectActionFailure2[domain(hanabi),atomic]
+@selectActionFailure2[domain(hanabi), atomic]
 -!select_action : .my_name(Me) & not spent_info_tokens
     <- ?ordered_slots(Me, [H|_]);
     Action = play_card(H);
@@ -109,7 +111,13 @@ all_minus_me(L) [domain(hanabi)] :-
     .broadcast(publicAction, Action).
 
 
-@performAction[domain(hanabi),atomic]
+@otherFailure[domain(hanabi), atomic]
+-!Goal : seed(Seed)
+    <- .log(info, "\n\npremature stop of game with seed ", Seed);
+    .stopMAS.
+
+
+@performAction[domain(hanabi), atomic]
 +!perform_action
     <- ?selected_action(Action);
     .abolish(selected_action(_));
@@ -117,16 +125,15 @@ all_minus_me(L) [domain(hanabi)] :-
     !Action.
 
 
-@kqmlReceivedHint[domain(hanabi),atomic]
+@kqmlReceivedHint[domain(hanabi), atomic]
 +!kqml_received(KQML_Sender_Var, hint, KQML_Content_Var, KQML_MsgId) : .my_name(Me)
     <- .add_annot(KQML_Content_Var, source(hint), H);
     +H;
     !update_probability_explicit_hint(KQML_Content_Var).
 
 
-@kqmlReceivedPublicAction[atomic,domain(hanabi)]
+@kqmlReceivedPublicAction[domain(hanabi), atomic]
 +!kqml_received(KQML_Sender_Var, publicAction, Action, KQML_MsgId) : .my_name(Me)
-
     <-
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
         .concat("has_card_", Mode, String);
@@ -245,7 +252,6 @@ knows(Ag, Rule) [domain(hanabi)] :-
     tomabd.misc.rule_head_body(Rule, Head, _) &
     tomabd.misc.get_annots(Head, Annots) &
     .member(domain(hanabi), Annots).
-
 
 
 /* ------------------- DOMAIN-DEPENDENT IMPOSSIBILITIES ------------------- */
