@@ -20,7 +20,9 @@ import jason.asSemantics.*;
  *          ActingAgent,                     // an atom
  *          Action,                          // an atom
  *          ActorViewpointExplanation,       // a variable that is bound by the IA
- *          ObserverViewpointExplanations    // a variable that is bound by the IA
+ *          ObserverViewpointExplanations,   // a variable that is bound by the IA
+ *          ActorAbductiveTomRule,           // a variable that is bound by the IA
+ *          ObserverAbductiveTomRule         // a variable that is bound by the IA
  *      );
  *      ...
  * \endcode
@@ -41,6 +43,12 @@ public class tom_abduction_task extends DefaultInternalAction {
             }
             if (tomAbdRules[1] != null) {
                 un.unifies(tomAbdRules[1], args[4]);
+            }
+            if (tomAbdRules[2] != null) {
+                un.unifies(tomAbdRules[2], args[5]);
+            }
+            if (tomAbdRules[3] != null) {
+                un.unifies(tomAbdRules[3], args[6]);
             }
             return true;
         } catch (Exception e) {

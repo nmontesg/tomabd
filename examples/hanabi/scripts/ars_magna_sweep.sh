@@ -19,15 +19,11 @@
 # load Java
 spack load openjdk@17.0.0_35
 
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 0 49 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 50 99 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 100 149 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 150 199 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 200 249 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 250 299 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 300 349 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 350 399 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 400 449 &
-srun -N1 -n1 --exclusive bash ars_magna_node.sh 450 499 &
+export RUNS_PER_NODE=50
+
+for i in $(seq 1 $SLURM_JOB_NUM_NODES)
+do
+    srun -N1 -n1 --exclusive bash scripts/ars_magna_node.sh $(($i-1)*$RUNS_PER_NODE) $($i*$RUNS_PER_NODE-1) &
+done
 
 wait

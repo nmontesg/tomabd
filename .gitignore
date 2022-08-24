@@ -1,4 +1,4 @@
-.vscode/*
+.vscode
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -14,3 +14,5 @@
 # Documentation build files
 docs/config.cfg
 docs/math.js
+
+examples/hanabi/bin

@@ -203,10 +203,14 @@
  * \f{equation}{
  *      \texttt{knows($k$, ..., knows($l$, knows($j$, imp [source(abduction)]
  *          :- ... )) ... )}
+ *      \label{eq:ic-observer}
  * \f}
  * 
- * This literal is then added to the program of the original agent \f$i\f$,
- * \f$T_{i}\f$.
+ * To allow for flexibility, the method responsible for the Tom+Abd
+ * (\ref tomabd.agent.TomAbdAgent.tomAbuctionTask) task does not add the
+ * generated abductive impossibility constraints in eqs.
+ * \f$\eqref{eq:ic-actor,eq:ic-observer}\f$). That is left as an
+ * implementation-dependent choice.
  * 
  * This process allows to update the original agent's (\f$i\f$'s) model of
  * the actor viewpoint. However, the ultimate goal is to update the model of
@@ -216,8 +220,7 @@
  * is repeated, this time from the viewpoint of the <i>observer</i> agent. In
  * case the viewpoint of the observer corresponds directly to the original
  * agent \f$i\f$ (which happens if the Theory of Mind task is first-order), the
- * impossibility constraint of the form in eq. \f$\eqref{eq:ic-actor}\f$ is
- * directly added to \f$T_i\f$.
+ * returned literal is directly of the form in eq. \f$\eqref{eq:ic-actor}\f$.
  * 
  * \subsection euf Updating abductive explanation
  * 
@@ -314,7 +317,9 @@
  *          ActingAgent,                     // an atom
  *          Action,                          // an atom
  *          ActorViewpointExplanation,       // a variable that is bound by the IA
- *          ObserverViewpointExplanations    // a variable that is bound by the IA
+ *          ObserverViewpointExplanations,   // a variable that is bound by the IA
+ *          ActorAbductiveTomRule,           // a variable that is bound by the IA
+ *          ObserverAbductiveTomRule         // a variable that is bound by the IA
  *      );
  *      ...
  * \endcode
@@ -329,7 +334,7 @@
  *      <- ...
  *      // first-order Theory of Mind -- abduction task
  *      tomabd.agent.tom_abduction_task(
- *          [], KQML_Sender_Var, Action, ActExpls, ObsExpls
+ *          [], KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomTule, ObsTomRule
  *      );
  *      ...
  * \endcode
@@ -724,16 +729,18 @@ public class TomAbdAgent extends Agent {
             removeBeliefs();
             recoverBeliefs();
 
-            if (actorAbductiveTomRule != null) {
-                addBel(actorAbductiveTomRule);
-            }
-            if (obsAbductiveTomRule != null) {
-                addBel(obsAbductiveTomRule);
-            }
+            // if (actorAbductiveTomRule != null) {
+            //     addBel(actorAbductiveTomRule);
+            // }
+            // if (obsAbductiveTomRule != null) {
+            //     addBel(obsAbductiveTomRule);
+            // }
 
-            Literal[] result = new Literal[2];
+            Literal[] result = new Literal[4];
             result[0] = refinedExplanationsActor;
             result[1] = refinedExplanationsObs;
+            result[2] = actorAbductiveTomRule;
+            result[3] = obsAbductiveTomRule;
 
             return result;
 

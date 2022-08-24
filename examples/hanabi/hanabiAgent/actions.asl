@@ -19,10 +19,7 @@ give_hint(P, color, C, SL) :-
 @playCard[domain(hanabi), atomic]
 +!play_card(Slot) : my_name(Me)
     <- reveal_card(Slot);
-    !update_probability_distributions_upon_reveal(Slot);
-
     play_card(Slot);
-
     .broadcast(achieve, remove_hint_info(Me, Slot));
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
@@ -33,10 +30,7 @@ give_hint(P, color, C, SL) :-
 @discardCard[domain(hanabi), atomic]
 +!discard_card(Slot) : my_name(Me)
     <- reveal_card(Slot);
-    !update_probability_distributions_upon_reveal(Slot);
-
     discard_card(Slot);
-
     .broadcast(achieve, remove_hint_info(Me, Slot));
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
@@ -66,10 +60,7 @@ give_hint(P, color, C, SL) :-
 +!replace_card(Slot) : num_cards_deck(D) & D > 0
     <- draw_random_card(Slot);
     .broadcast(achieve, update_slots(placed_card(Slot)));
-    !update_slots(placed_card(Slot));
-
-    .broadcast(achieve, update_probability_distributions_after_replacement(Slot));
-    !reset_probability_distribution(Slot).
+    !update_slots(placed_card(Slot)).
 
 
 @replaceCard2[domain(hanabi), atomic]

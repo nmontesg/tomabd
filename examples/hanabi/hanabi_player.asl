@@ -1,7 +1,7 @@
 { include("hanabiAgent/actions.asl") }              // plans to perform actions on the environment
 { include("hanabiAgent/strategy.asl") }             // action selection clauses
 { include("hanabiAgent/rules.asl") }                // auxiliary clauses
-{ include("hanabiAgent/prob.asl") }                 // probability distributions
+// { include("hanabiAgent/prob.asl") }                 // probability distributions
 
 domain(hanabi).
 
@@ -27,7 +27,7 @@ domain(hanabi).
     }
 
     // initialize probability distributions for all the slots
-    !initialize_probability_distributions;
+    // !initialize_probability_distributions;
     
     // inform that I am ready to start the game
     inform_ready.
@@ -41,48 +41,12 @@ all_minus_me(L) [domain(hanabi)] :-
 
 
 @takeTurn[domain(hanabi)]
-+player_turn(Me) : .my_name(Me)
++player_turn(Me) : .my_name(Me) //& .my_name(alice)
     <-
     !select_action;
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
     !perform_action;
-    .broadcast(achieve, log_distributions);
-    hanabiAgent.log_prob_dist(false);
     finish_turn.
-
-
-@logProbabilityDistributions1[domain(hanabi), atomic]
-+!log_distributions : not latest_abductive_explanation(_)
-    <- hanabiAgent.log_prob_dist(false).
-
-@logProbabilityDistributions2[domain(hanabi), atomic]
-+!log_distributions : latest_abductive_explanation(ObsExpl)
-    <- hanabiAgent.log_prob_dist(false);
-    // assert that all explanations are about either colour or rank
-    .setof(Pred, .member(M, ObsExpl) & .member(F, M) & F =.. [Pred, _, _], LP);
-    LP = [Predicate];
-
-    // assert that all explanations are about one slot
-    .setof(S, slot(S) & .member(M, ObsExpl) & .member(F, M) & F =.. [_, [Me, S, _], _], LS);
-    LS = [Slot];
-
-    // find the color/rank values
-    .setof(V, .member(M, ObsExpl) & .member(F, M) & F =.. [_, [Me, _, V], _], LV);
-
-    if ( Predicate = has_card_color ) {
-        .findall(possible_cards(Slot, C, R, Num), possible_cards(Slot, C, R, Num) & not .member(C, LV) & Num > 0, L);
-    } elif ( Predicate = has_card_rank ) {
-        .findall(possible_cards(Slot, C, R, Num), possible_cards(Slot, C, R, Num) & not .member(R, LV) & Num > 0, L);
-    }
-    
-    for ( .member(M, L) ) {
-        M = possible_cards(S, C, R, Num);
-        -possible_cards(S, C, R, Num);
-        +possible_cards(S, C, R, 0);
-    }
-
-    .abolish(latest_abductive_explanation(_));
-    hanabiAgent.log_prob_dist(true).
 
 
 @selectAction[domain(hanabi), atomic]
@@ -128,8 +92,7 @@ all_minus_me(L) [domain(hanabi)] :-
 @kqmlReceivedHint[domain(hanabi), atomic]
 +!kqml_received(KQML_Sender_Var, hint, KQML_Content_Var, KQML_MsgId) : .my_name(Me)
     <- .add_annot(KQML_Content_Var, source(hint), H);
-    +H;
-    !update_probability_explicit_hint(KQML_Content_Var).
+    +H.
 
 
 @kqmlReceivedPublicAction[domain(hanabi), atomic]
@@ -152,11 +115,14 @@ all_minus_me(L) [domain(hanabi)] :-
     // first-order Theory of Mind -- abduction task
     tomabd.agent.tom_abduction_task(
         [],
-        KQML_Sender_Var, Action, ActExpls, ObsExpls
+        KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomRule, ObsTomRule
     );
-    
-    if ( .length(ObsExpls, Len) & Len > 0 ) {
-        +latest_abductive_explanation(ObsExpls);
+
+    if ( .type(ActTomRule, literal) ) {
+        +ActTomRule;
+    }
+    if ( .type(ObsTomRule, literal) ) {
+        +ObsTomRule;
     }
 
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {

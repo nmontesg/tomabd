@@ -1,7 +1,6 @@
 var NAVTREEINDEX0 =
 {
-".html":[1,0,0],
-".html":[2,0,0],
+"":[1,0,0],
 "annotated.html":[2,0],
 "classes.html":[2,1],
 "classtomabd_1_1agent_1_1TomAbdAgent.html":[2,0,0,0,2],
@@ -45,9 +44,7 @@ var NAVTREEINDEX0 =
 "index.html#usage":[0,1],
 "index.html#viewpoint":[0,0,0],
 "namespaces.html":[1,0],
-"namespacetomabd_1_1agent.html":[2,0,0,0],
 "namespacetomabd_1_1agent.html":[1,0,0,0],
 "namespacetomabd_1_1misc.html":[1,0,0,1],
-"namespacetomabd_1_1misc.html":[2,0,0,1],
 "pages.html":[]
 };
