@@ -157,7 +157,7 @@ Generating and refining abductive explanations</h2>
 <p>However, eq. \(\eqref{eq:ic-actor}\) cannot be directly added to the original agent's program \(T_i\). Some extra step has to account for the fact that this explanation has been generated from viewpoint \([k, l, ..., j]\). To achieve this, the following <code>knows/2</code> is recursively built: </p><p class="formulaDsp">
 \begin{equation} \texttt{knows($k$, ..., knows($l$, knows($j$, imp [source(abduction)] :- ... )) ... )} \label{eq:ic-observer} \end{equation}
 </p>
-<p>To allow for flexibility, the method responsible for the Tom+Abd (tomabd.agent.TomAbdAgent.tomAbuctionTask) task does not add the generated abductive impossibility constraints in eqs. \(\eqref{eq:ic-actor,eq:ic-observer}\)). That is left as an implementation-dependent choice.</p>
+<p>To allow for flexibility, the method responsible for the Tom+Abd task (<a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#aaf51ef6b8779de9417d668237395702c">tomabd.agent.TomAbdAgent.tomAbductionTask</a>) does not add the generated abductive impossibility constraints in eqs. \(\eqref{eq:ic-actor}\) and \(\eqref{eq:ic-observer}\). That is left as an implementation-dependent choice.</p>
 <p>This process allows to update the original agent's ( \(i\)'s) model of the actor viewpoint. However, the ultimate goal is to update the model of the world from the perspective of the <em>observer</em>. To do so, the whole process of (i) refining the raw explanations; (ii) building the abductive impossibility constraint; and (iii) building a new <code>knows/2</code> literal, is repeated, this time from the viewpoint of the <em>observer</em> agent. In case the viewpoint of the observer corresponds directly to the original agent \(i\) (which happens if the Theory of Mind task is first-order), the returned literal is directly of the form in eq. \(\eqref{eq:ic-actor}\).</p>
 <h2><a class="anchor" id="euf"></a>
 Updating abductive explanation</h2>
@@ -238,7 +238,7 @@ Usage</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Aug 24 2022 20:57:40 for Theory of Mind + Abduction by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Wed Aug 24 2022 21:28:57 for Theory of Mind + Abduction by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

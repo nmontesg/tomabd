@@ -206,11 +206,11 @@
  *      \label{eq:ic-observer}
  * \f}
  * 
- * To allow for flexibility, the method responsible for the Tom+Abd
- * (\ref tomabd.agent.TomAbdAgent.tomAbuctionTask) task does not add the
+ * To allow for flexibility, the method responsible for the Tom+Abd task
+ * (\ref tomabd.agent.TomAbdAgent.tomAbductionTask) does not add the
  * generated abductive impossibility constraints in eqs.
- * \f$\eqref{eq:ic-actor,eq:ic-observer}\f$). That is left as an
- * implementation-dependent choice.
+ * \f$\eqref{eq:ic-actor}\f$ and \f$\eqref{eq:ic-observer}\f$. That is left as
+ * an implementation-dependent choice.
  * 
  * This process allows to update the original agent's (\f$i\f$'s) model of
  * the actor viewpoint. However, the ultimate goal is to update the model of
