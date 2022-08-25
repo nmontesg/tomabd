@@ -1,7 +1,7 @@
 { include("hanabiAgent/actions.asl") }              // plans to perform actions on the environment
 { include("hanabiAgent/strategy.asl") }             // action selection clauses
 { include("hanabiAgent/rules.asl") }                // auxiliary clauses
-// { include("hanabiAgent/prob.asl") }                 // probability distributions
+{ include("hanabiAgent/probability.asl") }          // probability distributions
 
 domain(hanabi).
 
@@ -26,8 +26,8 @@ domain(hanabi).
         +ordered_slots(P, SlotList);
     }
 
-    // initialize probability distributions for all the slots
-    // !initialize_probability_distributions;
+    // log initial probability distributions
+    !log_probability_distributions(false);
     
     // inform that I am ready to start the game
     inform_ready.
@@ -41,11 +41,15 @@ all_minus_me(L) [domain(hanabi)] :-
 
 
 @takeTurn[domain(hanabi)]
-+player_turn(Me) : .my_name(Me) //& .my_name(alice)
++player_turn(Me) : .my_name(Me) // & .my_name(alice)
     <-
     !select_action;
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
     !perform_action;
+
+    .broadcast(achieve, log_probability);
+    !log_probability_distributions(false);
+
     finish_turn.
 
 
@@ -77,7 +81,7 @@ all_minus_me(L) [domain(hanabi)] :-
 
 @otherFailure[domain(hanabi), atomic]
 -!Goal : seed(Seed)
-    <- .log(info, "\n\npremature stop of game with seed ", Seed);
+    <- .log(severe, "\n\npremature stop of game with seed ", Seed);
     .stopMAS.
 
 
@@ -118,11 +122,8 @@ all_minus_me(L) [domain(hanabi)] :-
         KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomRule, ObsTomRule
     );
 
-    if ( .type(ActTomRule, literal) ) {
-        +ActTomRule;
-    }
     if ( .type(ObsTomRule, literal) ) {
-        +ObsTomRule;
+        +latest_abductive_rule(ObsTomRule);
     }
 
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {

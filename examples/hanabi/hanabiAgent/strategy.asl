@@ -550,105 +550,7 @@ action(Agent, discard_card(Slot)) [domain(hanabi), priority(11.0)] :-
 
 /* ------------------------------------------------------------------------- */
 
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.0)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 1) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Color, SlotList) &
-    focus(Player, SlotList, Slot).
-
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.1)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 1) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Rank, SlotList) &
-    focus(Player, SlotList, Slot).
-
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.2)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 2) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Color, SlotList) &
-    focus(Player, SlotList, Slot).
-
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.3)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 2) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Rank, SlotList) &
-    focus(Player, SlotList, Slot).
-
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.4)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 3) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Color, SlotList) &
-    focus(Player, SlotList, Slot).
-
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.5)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 3) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Rank, SlotList) &
-    focus(Player, SlotList, Slot).
-
-action(Agent, give_hint(Player, color, Color, SlotList)) [domain(hanabi), priority(12.6)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 4) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Color, SlotList) &
-    focus(Player, SlotList, Slot).
-
-action(Agent, give_hint(Player, rank, Rank, SlotList)) [domain(hanabi), priority(12.7)] :-
-    player(Agent) &
-    num_info_tokens(Tokens) & max_info_tokens(Tokens) &
-    turns_ahead(Player, 4) &
-    slot(Slot) &
-    has_card_color(Player, Slot, Color) &
-    has_card_rank(Player, Slot, Rank) &
-    unhinted(Color, Rank) &
-    useful(Color, Rank) &
-    common_slots(Player, Rank, SlotList) &
-    focus(Player, SlotList, Slot).
-
-/* ------------------------------------------------------------------------- */
-
-action(Agent, discard_card(Slot)) [domain(hanabi), priority(13.0)] :-
+action(Agent, discard_card(Slot)) [domain(hanabi), priority(12.0)] :-
     my_name(Agent) &
     max_info_tokens(Max) &
     num_info_tokens(Tokens) &
@@ -656,7 +558,7 @@ action(Agent, discard_card(Slot)) [domain(hanabi), priority(13.0)] :-
     ordered_slots(Agent, OrdSlots) &
     oldest_slot(Agent, OrdSlots, Slot).
 
-action(Agent, play_card(Slot)) [domain(hanabi), priority(13.1)] :-
+action(Agent, play_card(Slot)) [domain(hanabi), priority(12.1)] :-
     my_name(Agent) &
     max_info_tokens(Max) &
     num_info_tokens(Max) &
