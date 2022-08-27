@@ -2,7 +2,7 @@
 
 # sbatch options
 #SBATCH --job-name=hanabi_runs
-#SBATCH --time=00-24:00:00
+#SBATCH --time=00-8:00:00
 #SBATCH --mem-per-cpu=2G
 
 #SBATCH --output=/home/nmontes/logs/%x-%j.log
@@ -11,21 +11,16 @@
 
 # You must carefully match tasks, cpus, nodes,
 # and cpus-per-task for your job. See docs.
-#SBATCH --tasks=10
-#SBATCH --nodes=10
+#SBATCH --tasks=4
+#SBATCH --nodes=4
 #SBATCH --cpus-per-task=20
 #SBATCH --tasks-per-node=1
 
-# load Java
-spack load openjdk@17.0.0_35
+spack load python@3.8.11
 
-export RUNS_PER_NODE=50
-
-for i in $(seq 1 $SLURM_JOB_NUM_NODES)
+for i in {2..5}
 do
-	let FIRST=($i-1)*$RUNS_PER_NODE
-	let SECOND=$i*$RUNS_PER_NODE-1
-	srun -N1 -n1 --exclusive bash scripts/ars_magna_node.sh $FIRST $SECOND &
+    srun -N1 -n1 --exclusive python3 results/single.py $i &
 done
 
 wait

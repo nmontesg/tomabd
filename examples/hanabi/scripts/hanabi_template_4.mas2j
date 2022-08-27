@@ -1,8 +1,8 @@
-MAS hanabi {
+MAS hanabi_NUMPLAYERS_SEED {
 
     environment:
         // mas2j file, numLives, numInfoTokens, numColors, numRanks, seed
-        hanabiEnv.HanabiGame("hanabi.mas2j", 3, 8, 5, 5, 218)
+        hanabiEnv.HanabiGame("hanabi-NUMPLAYERS-SEED.mas2j", 3, 8, 5, 5, SEED)
 
     agents:
         alice hanabi_player
@@ -15,9 +15,6 @@ MAS hanabi {
             agentClass tomabd.agent.TomAbdAgent;
 
         donald hanabi_player
-            agentClass tomabd.agent.TomAbdAgent;
-
-        emma hanabi_player
             agentClass tomabd.agent.TomAbdAgent;
 
     classpath: "../../lib/tomabd.jar";
