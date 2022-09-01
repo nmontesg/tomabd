@@ -2,7 +2,7 @@
 
 # sbatch options
 #SBATCH --job-name=hanabi_runs
-#SBATCH --time=00-8:00:00
+#SBATCH --time=00-12:00:00
 #SBATCH --mem-per-cpu=2G
 
 #SBATCH --output=/home/nmontes/logs/%x-%j.log
@@ -16,11 +16,11 @@
 #SBATCH --cpus-per-task=20
 #SBATCH --tasks-per-node=1
 
-spack load python@3.8.11
+spack load anaconda3@2021.05
 
 for i in {2..5}
 do
-    srun -N1 -n1 --exclusive python3 results/single.py $i &
+    srun -N1 -n1 --exclusive /home/nmontes/.conda/envs/hanabi/bin/python single.py $i &
 done
 
 wait

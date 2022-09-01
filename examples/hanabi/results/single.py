@@ -25,7 +25,7 @@ parser.add_argument('N', type=int, help='process the games with N players')
 ns = parser.parse_args()
 
 # global variables
-results_parent_path = "/home/nmontes/hanabi-results"
+results_parent_path = "/home/nmontes/OneDrive/Documentos/PhD/hanabi-results"
 num_players = ns.N
 path = "{}/{}_players".format(results_parent_path, num_players)
 slots_per_player = 5 if num_players == 2 or num_players == 3 else 4
@@ -168,10 +168,12 @@ if __name__ == '__main__':
 
     all_games = pd.DataFrame()
 
-    for seed in seeds:
+    for seed in [309, 321, 122, 336, 34, 40, 297]:
         try:
             results = process_game(seed)
         except Exception:
+            logging.warning("For {} players and seed {}, reading the evolution \
+            file resulted in error".format(num_players, seed))
             continue
         results["seed"] = seed
         res = {k: [v] for k, v in results.items()}

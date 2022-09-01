@@ -729,13 +729,6 @@ public class TomAbdAgent extends Agent {
             removeBeliefs();
             recoverBeliefs();
 
-            // if (actorAbductiveTomRule != null) {
-            //     addBel(actorAbductiveTomRule);
-            // }
-            // if (obsAbductiveTomRule != null) {
-            //     addBel(obsAbductiveTomRule);
-            // }
-
             Literal[] result = new Literal[4];
             result[0] = refinedExplanationsActor;
             result[1] = refinedExplanationsObs;
@@ -985,7 +978,9 @@ public class TomAbdAgent extends Agent {
             LogicalFormula rhs = logicalFormula.getRHS();
             Literal l = (Literal) lhs;
             Literal abdL = Literal.parseLiteral(String.format("abducible(%s)", l.toString()));
-            if (believes(abdL, u)) {
+            if (believes(l, u)) {
+                ;
+            } else if (believes(abdL, u)) {
                 abducibles.add(abdL);
             }
             u.clear();

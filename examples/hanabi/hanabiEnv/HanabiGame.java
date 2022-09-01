@@ -429,7 +429,7 @@ public class HanabiGame extends Environment {
             removePerceptsByUnif(Literal.parseLiteral(String.format("score(_)")));
             addPercept(Literal.parseLiteral(String.format("score(%d)", score)));
             try {
-                evolutionBuffer.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move, agent, "play_card", slot, hintId, score));
+                evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move, agent, "play_card", slot, hintId, score));
             } catch (IOException e) {
                 e.printStackTrace();
             }

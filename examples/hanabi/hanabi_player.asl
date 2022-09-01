@@ -123,6 +123,11 @@ all_minus_me(L) [domain(hanabi)] :-
     );
 
     if ( .type(ObsTomRule, literal) ) {
+        .log(info, ObsTomRule);
+        +ObsTomRule;
+    }
+
+    if ( .type(ObsTomRule, literal) ) {
         +latest_abductive_rule(ObsTomRule);
     }
 
@@ -149,15 +154,12 @@ knows(Ag, Fact [source(aux)]) [domain(hanabi)] :- player(Ag) & Fact [source(aux)
 /* ------------------------------ ABDUCIBLES ------------------------------ */
 
 abducible(has_card_color(Player, Slot, C)) [domain(hanabi)] :-
-    player(Player) & my_name(Me) & Player \== Me &
-    slot(Slot) & color(C) &
+    player(Player) & slot(Slot) & color(C) &
     not has_card_color(Player, Slot, _) &
     not ~has_card_color(Player, Slot, C).
 
 abducible(has_card_rank(Player, Slot, R)) [domain(hanabi)] :-
-    player(Player) & my_name(Me) & Player \== Me &
-    slot(Slot) & rank(R) &
-    my_name(Me) & Player \== Me &
+    player(Player) & slot(Slot) & rank(R) &
     not has_card_rank(Player, Slot, _) & 
     not ~has_card_rank(Player, Slot, R).
 
