@@ -397,7 +397,7 @@ public class HanabiGame extends Environment {
             // if current score == maxScore: finish execution of the game
             if (score == maxScore) {
                 try {
-                    evolutionBuffer.write(String.format("%d;%d;%s;%s;%s;%d;%d\n", seed, move, agent, "play_card", slot, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move, agent, "play_card", slot, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

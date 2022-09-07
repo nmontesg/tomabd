@@ -20,7 +20,7 @@ spack load anaconda3@2021.05
 
 for i in {2..5}
 do
-    srun -N1 -n1 --exclusive /home/nmontes/.conda/envs/hanabi/bin/python single.py $i &
+    srun -N1 -n1 --exclusive /home/nmontes/.conda/envs/hanabi/bin/python single.py $1 $i &
 done
 
 wait

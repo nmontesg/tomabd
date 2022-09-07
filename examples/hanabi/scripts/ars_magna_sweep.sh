@@ -25,7 +25,7 @@ for i in $(seq 1 $SLURM_JOB_NUM_NODES)
 do
 	let FIRST=($i-1)*$RUNS_PER_NODE
 	let SECOND=$i*$RUNS_PER_NODE-1
-	srun -N1 -n1 --exclusive bash scripts/ars_magna_node.sh $FIRST $SECOND &
+	srun -N1 -n1 --exclusive bash scripts/ars_magna_node.sh $1 $FIRST $SECOND &
 done
 
 wait

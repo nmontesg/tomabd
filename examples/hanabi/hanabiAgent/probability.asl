@@ -27,6 +27,7 @@ explanation_components(Explanation, Predicate, Slot, Values) :-
 
 impossible(Slot, Color, _) [domain(hanabi)] :-
     tomabd.misc.rule(Rule) &
+    not latest_abductive_rule(Rule) &
     tomabd.misc.rule_head_body(Rule, Head, _) &
     tomabd.misc.get_annots(Head, [expl(Explanation), source(abduction)]) &
     explanation_to_list(Explanation, ExplL) &
@@ -35,6 +36,7 @@ impossible(Slot, Color, _) [domain(hanabi)] :-
 
 impossible(Slot, _, Rank) [domain(hanabi)] :-
     tomabd.misc.rule(Rule) &
+    not latest_abductive_rule(Rule) &
     tomabd.misc.rule_head_body(Rule, Head, _) &
     tomabd.misc.get_annots(Head, [expl(Explanation), source(abduction)]) &
     explanation_to_list(Explanation, ExplL) &
@@ -65,7 +67,6 @@ impossible(Slot, _, Rank) [domain(hanabi)] :-
     : .my_name(Me) & latest_abductive_rule(IC)
 
     <- !log_probability_distributions(false);
-    +IC;
     .abolish(latest_abductive_rule(_));
     !log_probability_distributions(true).
 

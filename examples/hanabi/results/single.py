@@ -9,23 +9,31 @@ __author__ = "Nieves Montes"
 
 
 import argparse
+from concurrent.futures import process
 import logging
+import multiprocessing as mp
 import math
 import os
 from itertools import product
+from unittest import result
 
 import pandas as pd
 import numpy as np
+
+from pandas.errors import ParserError
 
 logging.basicConfig(level=logging.INFO)
 
 parser = argparse.ArgumentParser(description='Process the results from \
     the simulations of Hanabi games.')
+parser.add_argument('abd', type=str, help='use results with abduction (true) or not (false)')
 parser.add_argument('N', type=int, help='process the games with N players')
 ns = parser.parse_args()
 
 # global variables
-results_parent_path = "/home/nmontes/OneDrive/Documentos/PhD/hanabi-results"
+results_home = "/home/nmontes/OneDrive/Documentos/PhD/hanabi-results"
+# results_home = "/home/nmontes/hanabi-results"
+results_parent_path = "{}/abd-{}".format(results_home, ns.abd)
 num_players = ns.N
 path = "{}/{}_players".format(results_parent_path, num_players)
 slots_per_player = 5 if num_players == 2 or num_players == 3 else 4
@@ -87,32 +95,35 @@ def process_hint(hint_move, seed, base=25):
     compute_probability(pre_action_distribution)
     compute_probability(post_action_distribution)
 
-    explicit_info_mre_per_slot = {
+    explicit_info_per_slot = {
         s: kullback_leibler_distance(pre_action_distribution, \
             post_action_distribution, s, base=base) \
         for s in range(1, slots_per_player+1)
     }
-    total_explicit_info_mre = sum(explicit_info_mre_per_slot.values())
 
     # compute information gain by the IMPLICIT knowledge conveyed by the hint
-    post_explanation_file = "{}/results_{}_{}/{}_{}_true.csv".format(path, \
-        num_players, seed, receiver, move+1)
-    try:
-        post_explanation_distribution = pd.read_csv(post_explanation_file, \
-            sep=';')
-    except FileNotFoundError:
-        return total_explicit_info_mre, float('nan')
-    
-    compute_probability(post_explanation_distribution)
+    if ns.abd == "true":
+        post_explanation_file = "{}/results_{}_{}/{}_{}_true.csv".format(path, \
+            num_players, seed, receiver, move+1)
+        implicit_info_per_slot = {s: 0 for s in range(1, slots_per_player+1)}
+        try:
+            post_explanation_distribution = pd.read_csv(post_explanation_file, \
+                sep=';')
+        except FileNotFoundError:   
+            return move, receiver, explicit_info_per_slot, implicit_info_per_slot
+        
+        compute_probability(post_explanation_distribution)
 
-    implicit_info_mre_per_slot = {
-        s: kullback_leibler_distance(post_action_distribution, \
-            post_explanation_distribution, s, base=base) \
-        for s in range(1, slots_per_player+1)
-    }
-    total_implicit_info_mre = sum(implicit_info_mre_per_slot.values())
+        implicit_info_per_slot = {
+            s: kullback_leibler_distance(post_action_distribution, \
+                post_explanation_distribution, s, base=base) \
+            for s in range(1, slots_per_player+1)
+        }
 
-    return total_explicit_info_mre, total_implicit_info_mre
+        return move, receiver, explicit_info_per_slot, implicit_info_per_slot
+
+    else:
+        return move, receiver, explicit_info_per_slot
 
 
 def process_game(seed, **kwargs):
@@ -133,27 +144,46 @@ def process_game(seed, **kwargs):
     receiver = hint_moves["actions_args"].apply(lambda s: get_arg(s, 0, ','))
     hint_moves.insert(hint_moves.shape[1], "receiver", receiver)
 
-    # get the explicit and implicit information gained at hints at every slot 
-    # and add to the df
-    info_gain = [process_hint(h, seed, **kwargs) \
-        for _, h in hint_moves.iterrows()]
-    explicit_info_gain = [x[0] for x in info_gain]
-    implicit_info_gain = [x[1] for x in info_gain]
+    basic_cols = ['move', 'receiver', 'slot', 'explicit_info']
+    if ns.abd == "true":
+        basic_cols += ['implicit_info']
+    info_df = pd.DataFrame(columns=basic_cols)
 
-    # get the total explicit and implicit information gained at hints and
-    # add to the df
-    total_explicit_info = np.nansum(explicit_info_gain)
-    total_implicit_info = np.nansum(implicit_info_gain)
+    for _, h in hint_moves.iterrows():
+        hint_res = process_hint(h, seed, **kwargs)
+        for s in range(1, slots_per_player+1):
+            new_row = {'move': [hint_res[0]], 'receiver': [hint_res[1]]}
+            new_row['slot'] = [s]
+            new_row['explicit_info'] = [hint_res[2][s]]
+            if ns.abd == "true":
+                new_row['implicit_info'] = [hint_res[3][s]]
+            new_entry = pd.DataFrame.from_dict(new_row)
+            info_df = pd.concat([info_df, new_entry])
     
-    avg_explicit_info = np.nanmean(explicit_info_gain)
-    avg_implicit_info = np.nanmean(implicit_info_gain)
+    return results, info_df
 
-    results["total_explicit_info"] = total_explicit_info
-    results["total_implicit_info"] = total_implicit_info
-    results["avg_explicit_info"] = avg_explicit_info
-    results["avg_implicit_info"] = avg_implicit_info
-    
-    return results
+
+def process_bunch(indices):
+    start = indices[0]
+    stop = indices[1]
+    all_games = pd.DataFrame()
+
+    for seed in range(start, stop+1):
+        try:
+            results, info_df = process_game(seed)
+        except ParserError:
+            logging.warning("For {} players and seed {}, reading the evolution \
+            file resulted in error".format(num_players, seed))
+            continue
+        info_file = "info_gain_{}_{}_{}.csv".format(ns.abd, num_players, seed)
+        info_df.to_csv(info_file, sep=';', index=False)
+        results["seed"] = seed
+        res = {k: [v] for k, v in results.items()}
+        results_df = pd.DataFrame.from_dict(res)
+        all_games = pd.concat([all_games, results_df])
+
+    return all_games
+
 
 
 if __name__ == '__main__':
@@ -166,20 +196,21 @@ if __name__ == '__main__':
         logging.info("For {} players, the following seeds are missing: {}".\
             format(num_players, missing_seeds))
 
-    all_games = pd.DataFrame()
+    calls_per_cpu = len(seeds) // mp.cpu_count()
+    spare_calls = len(seeds) % mp.cpu_count()
+    indices = []
+    start = 0
+    for i in range(mp.cpu_count()):
+        stop = start + calls_per_cpu - 1
+        if i < spare_calls:
+            stop += 1
+        indices.append((start, stop))
+        start = stop+1
 
-    for seed in [309, 321, 122, 336, 34, 40, 297]:
-        try:
-            results = process_game(seed)
-        except Exception:
-            logging.warning("For {} players and seed {}, reading the evolution \
-            file resulted in error".format(num_players, seed))
-            continue
-        results["seed"] = seed
-        res = {k: [v] for k, v in results.items()}
-        results_df = pd.DataFrame.from_dict(res)
-        results_df.set_index("seed")
-        all_games = pd.concat([all_games, results_df])
+    pool = mp.Pool(mp.cpu_count())
+    result = pool.map(process_bunch, indices)
+    pool.close()
 
-    summary_file = "summary_{}_players.csv".format(num_players)
-    all_games.to_csv(summary_file, sep=';')
+    all_games = pd.concat(result, ignore_index=True)
+    summary_file = "summary_{}_{}_players.csv".format(ns.abd, num_players)
+    all_games.to_csv(summary_file, sep=';', index=False)

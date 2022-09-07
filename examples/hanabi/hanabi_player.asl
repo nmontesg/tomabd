@@ -125,9 +125,6 @@ all_minus_me(L) [domain(hanabi)] :-
     if ( .type(ObsTomRule, literal) ) {
         .log(info, ObsTomRule);
         +ObsTomRule;
-    }
-
-    if ( .type(ObsTomRule, literal) ) {
         +latest_abductive_rule(ObsTomRule);
     }
 
