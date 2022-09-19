@@ -194,7 +194,16 @@ public class HanabiGame extends Environment {
             evolutionLogger.createNewFile();
             FileWriter evolutionWriter = new FileWriter(evolutionFileName);
             evolutionBuffer = new BufferedWriter(evolutionWriter);
-            evolutionBuffer.write("move;player;action_functor;actions_args;hints;score\n");
+            evolutionBuffer.write("move;player;action_functor;actions_args;hints;score");
+            for (String ag: agents) {
+                for (int i = 1; i <= cardsPerPlayer; i++) {
+                    evolutionBuffer.write(String.format(";%s-%d", ag, i));
+                }
+            }
+            evolutionBuffer.write("\n");
+
+            evolutionBuffer.write("0;none;none;none;0;0");
+            logCardDistributions();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -234,7 +243,7 @@ public class HanabiGame extends Environment {
                 slot = Integer.parseInt(action.getTerm(0).toString());
                 result = playCard(agent, slot);
                 try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move-1, agent, "play_card", slot, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, action.getFunctor(), slot, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -244,7 +253,7 @@ public class HanabiGame extends Environment {
                 slot = Integer.parseInt(action.getTerm(0).toString());
                 result = discardCard(agent, slot);
                 try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move-1, agent, "discard_card", slot, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, action.getFunctor(), slot, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -255,10 +264,14 @@ public class HanabiGame extends Environment {
                 String actionArgs = action.getTerms().toString();
                 String actionArgsNoBrack = actionArgs.substring(1, actionArgs.length()-1);
                 try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move-1, agent, "give_hint", actionArgsNoBrack, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, "give_hint", actionArgsNoBrack, hintId, score));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                break;
+
+            case "record_card_distributions":
+                result = logCardDistributions();
                 break;
 
             default:
@@ -397,7 +410,8 @@ public class HanabiGame extends Environment {
             // if current score == maxScore: finish execution of the game
             if (score == maxScore) {
                 try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move, agent, "play_card", slot, hintId, score));
+                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move, agent, "play_card", slot, hintId, score));
+                    logCardDistributions();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -429,7 +443,8 @@ public class HanabiGame extends Environment {
             removePerceptsByUnif(Literal.parseLiteral(String.format("score(_)")));
             addPercept(Literal.parseLiteral(String.format("score(%d)", score)));
             try {
-                evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d\n", move, agent, "play_card", slot, hintId, score));
+                evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move, agent, "play_card", slot, hintId, score));
+                logCardDistributions();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -500,6 +515,25 @@ public class HanabiGame extends Environment {
         move += 1;
         removePerceptsByUnif(Literal.parseLiteral(String.format("move(_)")));
         addPercept(Literal.parseLiteral(String.format("move(%d)", move)));
+        return true;
+    }
+
+    private boolean logCardDistributions() {
+        try {
+            for (int i = 0; i < numPlayers; i++) {
+                for (int s = 1; s <= cardsPerPlayer; s++) {
+                    HanabiCard card = cardHolders[i].getCard(s);
+                    if (card == null) {
+                        evolutionBuffer.write(";none");
+                    } else {
+                        evolutionBuffer.write(String.format(";%s-%d", card.getColor(), card.getRank()));
+                    }
+                }
+            }
+            evolutionBuffer.write("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 

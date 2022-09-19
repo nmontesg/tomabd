@@ -2,7 +2,7 @@ MAS hanabi {
 
     environment:
         // mas2j file, numLives, numInfoTokens, numColors, numRanks, seed
-        hanabiEnv.HanabiGame("hanabi.mas2j", 3, 8, 5, 5, 381)
+        hanabiEnv.HanabiGame("hanabi.mas2j", 3, 8, 5, 5, 0)
 
     agents:
         alice hanabi_player

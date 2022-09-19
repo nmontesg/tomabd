@@ -24,7 +24,8 @@ give_hint(P, color, C, SL) :-
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
     !update_slots(took_card(Slot));
-    !replace_card(Slot).
+    !replace_card(Slot);
+    record_card_distributions.
 
     
 @discardCard[domain(hanabi), atomic]
@@ -35,7 +36,8 @@ give_hint(P, color, C, SL) :-
     !remove_hint_info(Me, Slot);
     .broadcast(achieve, update_slots(took_card(Slot)));
     !update_slots(took_card(Slot));
-    !replace_card(Slot).
+    !replace_card(Slot);
+    record_card_distributions.
 
 
 @giveHint[domain(hanabi), atomic]
@@ -53,7 +55,8 @@ give_hint(P, color, C, SL) :-
             +(~Belief);
         }
     }
-    spend_info_token(HintedPlayer, Mode, Value, SlotList).
+    spend_info_token(HintedPlayer, Mode, Value, SlotList);
+    record_card_distributions.
 
 
 @replaceCard1[domain(hanabi), atomic]

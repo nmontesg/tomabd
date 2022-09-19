@@ -15,6 +15,7 @@ import multiprocessing as mp
 import math
 import os
 from itertools import product
+from turtle import distance
 from unittest import result
 
 import pandas as pd
@@ -31,8 +32,8 @@ parser.add_argument('N', type=int, help='process the games with N players')
 ns = parser.parse_args()
 
 # global variables
-results_home = "/home/nmontes/OneDrive/Documentos/PhD/hanabi-results"
-# results_home = "/home/nmontes/hanabi-results"
+# results_home = "/home/nmontes/Documentos/hanabi-results"
+results_home = "/home/nmontes/hanabi-results"
 results_parent_path = "{}/abd-{}".format(results_home, ns.abd)
 num_players = ns.N
 path = "{}/{}_players".format(results_parent_path, num_players)
@@ -101,6 +102,18 @@ def process_hint(hint_move, seed, base=25):
         for s in range(1, slots_per_player+1)
     }
 
+    # compute the distance from the EXPLICIT distribution to the true distribution
+    distance_explicit = {}
+    for s in range(1, slots_per_player+1):
+        true_card = hint_move["{}-{}".format(receiver, s)].split('-')
+        color = true_card[0]
+        rank = int(true_card[1])
+        q = post_action_distribution.loc[ \
+            (post_action_distribution["slot"] == s) & \
+            (post_action_distribution["color"] == color) & \
+            (post_action_distribution["rank"] == rank), "prob"].iloc[0]
+        distance_explicit[s] = -math.log(q, base)
+
     # compute information gain by the IMPLICIT knowledge conveyed by the hint
     if ns.abd == "true":
         post_explanation_file = "{}/results_{}_{}/{}_{}_true.csv".format(path, \
@@ -110,7 +123,8 @@ def process_hint(hint_move, seed, base=25):
             post_explanation_distribution = pd.read_csv(post_explanation_file, \
                 sep=';')
         except FileNotFoundError:   
-            return move, receiver, explicit_info_per_slot, implicit_info_per_slot
+            return move, receiver, explicit_info_per_slot, implicit_info_per_slot, \
+                distance_explicit, distance_explicit
         
         compute_probability(post_explanation_distribution)
 
@@ -120,7 +134,20 @@ def process_hint(hint_move, seed, base=25):
             for s in range(1, slots_per_player+1)
         }
 
-        return move, receiver, explicit_info_per_slot, implicit_info_per_slot
+        # compute the distance from the IMPLICIT distribution to the true distribution
+        distance_implicit = {}
+        for s in range(1, slots_per_player+1):
+            true_card = hint_move["{}-{}".format(receiver, s)].split('-')
+            color = true_card[0]
+            rank = int(true_card[1])
+            q = post_explanation_distribution.loc[ \
+                (post_explanation_distribution["slot"] == s) & \
+                (post_explanation_distribution["color"] == color) & \
+                (post_explanation_distribution["rank"] == rank), "prob"].iloc[0]
+            distance_implicit[s] = -math.log(q, base)
+
+        return move, receiver, explicit_info_per_slot, implicit_info_per_slot, \
+            distance_explicit, distance_implicit
 
     else:
         return move, receiver, explicit_info_per_slot
@@ -146,7 +173,7 @@ def process_game(seed, **kwargs):
 
     basic_cols = ['move', 'receiver', 'slot', 'explicit_info']
     if ns.abd == "true":
-        basic_cols += ['implicit_info']
+        basic_cols += ['implicit_info', 'distance_explicit', 'distance_implicit']
     info_df = pd.DataFrame(columns=basic_cols)
 
     for _, h in hint_moves.iterrows():
@@ -157,6 +184,8 @@ def process_game(seed, **kwargs):
             new_row['explicit_info'] = [hint_res[2][s]]
             if ns.abd == "true":
                 new_row['implicit_info'] = [hint_res[3][s]]
+                new_row['distance_explicit'] = [hint_res[4][s]]
+                new_row['distance_implicit'] = [hint_res[5][s]]
             new_entry = pd.DataFrame.from_dict(new_row)
             info_df = pd.concat([info_df, new_entry])
     
@@ -188,6 +217,7 @@ def process_bunch(indices):
 
 if __name__ == '__main__':
     seeds = get_seeds()
+    # seeds = [0]
     logging.info("For {} players, {} simulations have been run".\
         format(num_players, len(seeds)))
 
@@ -196,18 +226,20 @@ if __name__ == '__main__':
         logging.info("For {} players, the following seeds are missing: {}".\
             format(num_players, missing_seeds))
 
-    calls_per_cpu = len(seeds) // mp.cpu_count()
-    spare_calls = len(seeds) % mp.cpu_count()
+    num_cpus = mp.cpu_count() if len(seeds) > mp.cpu_count() else len(seeds)
+
+    calls_per_cpu = len(seeds) // num_cpus
+    spare_calls = len(seeds) % num_cpus
     indices = []
     start = 0
-    for i in range(mp.cpu_count()):
+    for i in range(num_cpus):
         stop = start + calls_per_cpu - 1
         if i < spare_calls:
             stop += 1
         indices.append((start, stop))
         start = stop+1
 
-    pool = mp.Pool(mp.cpu_count())
+    pool = mp.Pool(num_cpus)
     result = pool.map(process_bunch, indices)
     pool.close()
 
