@@ -461,7 +461,7 @@ public class TomAbdAgent extends Agent {
      * @param viewpoint
      * @throws JasonException
      */
-    private void adoptViewpoint(List<Term> viewpoint) throws JasonException {
+    private final void adoptViewpoint(List<Term> viewpoint) throws JasonException {
         try {
             backUpBeliefs();
             if (viewpoint.isEmpty()) {
