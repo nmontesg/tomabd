@@ -4,8 +4,7 @@ authors:
   - family-names: Montes
     given-names: Nieves
     orcid: "https://orcid.org/0000-0001-6981-7893"
-title: TomAbd
-abstract: An agent model combining Theory of Mind and abduction
+title: "TomAbd: An agent model combining Theory of Mind and abduction"
 version: 1.0.0
 date-released: 2022
 license: Creative Commons
