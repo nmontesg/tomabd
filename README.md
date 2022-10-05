@@ -8,4 +8,8 @@ Check the [documentation](https://nmontesg.github.io/tomabd/html/index.html)
 for a detailed description of the agent model.
 
 ### References
-<!-- TODO: add references here later on -->
+
+Montes, N., Osman, N., and Sierra, C. (2022). Combining Theory of Mind and
+Abduction for Cooperation under Imperfect Information. https://https://arxiv.org/abs/2209.15279
+
+<!-- TODO: add journal paper here later on -->
