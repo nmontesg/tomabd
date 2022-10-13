@@ -11,14 +11,14 @@ MAS hanabi {
         bob hanabi_player
             agentClass tomabd.agent.TomAbdAgent;
 
-        cathy hanabi_player
-            agentClass tomabd.agent.TomAbdAgent;
+        // cathy hanabi_player
+        //     agentClass tomabd.agent.TomAbdAgent;
 
-        donald hanabi_player
-            agentClass tomabd.agent.TomAbdAgent;
+        // donald hanabi_player
+        //     agentClass tomabd.agent.TomAbdAgent;
 
-        emma hanabi_player
-            agentClass tomabd.agent.TomAbdAgent;
+        // emma hanabi_player
+        //     agentClass tomabd.agent.TomAbdAgent;
 
     classpath: "../../lib/tomabd.jar";
 

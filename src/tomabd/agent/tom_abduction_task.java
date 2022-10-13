@@ -1,10 +1,12 @@
 package tomabd.agent;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import jason.*;
 import jason.asSyntax.*;
 import jason.asSemantics.*;
+import com.google.common.base.Stopwatch;
 
 /**
  * This internal action provides an interface from the agent's AgentSpeak
@@ -37,7 +39,13 @@ public class tom_abduction_task extends DefaultInternalAction {
             List<Term> obsAgentLevel = obsAgentLevelTerm.getAsList();
             Atom actor = (Atom) args[1];
             Atom action = (Atom) args[2];
+
+            Stopwatch timer = Stopwatch.createUnstarted();
+            timer.start();
             Literal[] tomAbdRules = ag.tomAbductionTask(obsAgentLevel, actor, action);
+            timer.stop();
+            long et = timer.elapsed(TimeUnit.MICROSECONDS);
+
             if (tomAbdRules[0] != null) {
                 un.unifies(tomAbdRules[0], args[3]);
             }
@@ -50,6 +58,8 @@ public class tom_abduction_task extends DefaultInternalAction {
             if (tomAbdRules[3] != null) {
                 un.unifies(tomAbdRules[3], args[6]);
             }
+            NumberTermImpl etTerm = new NumberTermImpl(et);
+            un.unifies(etTerm, args[7]);
             return true;
         } catch (Exception e) {
             throw new JasonException("Error in 'tomabd.agent.tom_abduction_task': " + e.toString());
