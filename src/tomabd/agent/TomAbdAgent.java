@@ -319,7 +319,8 @@
  *          ActorViewpointExplanation,       // a variable that is bound by the IA
  *          ObserverViewpointExplanations,   // a variable that is bound by the IA
  *          ActorAbductiveTomRule,           // a variable that is bound by the IA
- *          ObserverAbductiveTomRule         // a variable that is bound by the IA
+ *          ObserverAbductiveTomRule,        // a variable that is bound by the IA
+ *          ElapsedTime                      // a variable that is bound by the IA
  *      );
  *      ...
  * \endcode

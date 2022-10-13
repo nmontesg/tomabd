@@ -135,7 +135,7 @@ Adopting a different viewpoint</h2>
 <li>The last element of the sequence ( \(j\)) is the <em>acting agent</em>.</li>
 <li>The sequence excluding the last element (the actor), \([j, ..., k]\), is the <em>observer viewpoint</em>.</li>
 </ul>
-<p>In order for the observer agent \(i\) to interpret tha acting agent \(j\)'s action, \(i\) needs to switch its perspective to that of the agent. This may mean adopting its direct estimation of \(j\)'s program ( \(T_{i,j}\)) in a <b>first-order</b> ToM+abd task, or through several intermediaries ( \(T_{i,k, ..., l, j}\)) in a <b>higher-order</b> ToM+abd task. Either way, the substitution of the original agent program by a new (arbitrary) viewpoint is implemented by the <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#ae255adbec7b800ceac1028f2c7b89d7b">tomabd.agent.TomAbdAgent.adoptViewpoint</a> method.</p>
+<p>In order for the observer agent \(i\) to interpret tha acting agent \(j\)'s action, \(i\) needs to switch its perspective to that of the agent. This may mean adopting its direct estimation of \(j\)'s program ( \(T_{i,j}\)) in a <b>first-order</b> ToM+abd task, or through several intermediaries ( \(T_{i,k, ..., l, j}\)) in a <b>higher-order</b> ToM+abd task. Either way, the substitution of the original agent program by a new (arbitrary) viewpoint is implemented by the <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#a56f5a48a4e3e0524aef217e0ecfae88d">tomabd.agent.TomAbdAgent.adoptViewpoint</a> method.</p>
 <h2><a class="anchor" id="abduction"></a>
 Generating and refining abductive explanations</h2>
 <p>Once observer \(i\) has adopted acting agent viewpoint, the observer is in a position to <em>explain</em> why the actor selected action \(a_j\), in hopes that this newly derived knowledge will be useful for his own later decision-making. This <em>inference to the best explanation</em> is called <b>abductive reasoning</b>. In order to compute abductive explanations, it is necessary to specify, in a domain-specific way the set of <b>abducible facts</b>. These are the facts that can possibly compliment a belief base. These are specified through a set of clauses with head <code>abducible(Fact)</code>.</p>
@@ -212,7 +212,8 @@ Usage</h1>
 <div class="line">         ActorViewpointExplanation,       // a variable that is bound by the IA</div>
 <div class="line">         ObserverViewpointExplanations,   // a variable that is bound by the IA</div>
 <div class="line">         ActorAbductiveTomRule,           // a variable that is bound by the IA</div>
-<div class="line">         ObserverAbductiveTomRule         // a variable that is bound by the IA</div>
+<div class="line">         ObserverAbductiveTomRule,        // a variable that is bound by the IA</div>
+<div class="line">         ElapsedTime                      // a variable that is bound by the IA</div>
 <div class="line">     );</div>
 <div class="line">     ...</div>
 </div><!-- fragment --><p>The decision on when to invoke this IA is domain-specific and is left to the MAS developer. For example, in the Hanabi game a custom KQML performative <code>publicAction</code> is used to announce the selected action. A reception of a message with this performative triggers a Theory of Mind &ndash; abduction task: </p><div class="fragment"><div class="line">!kqml_received(KQML_Sender_Var, publicAction, Action, KQML_MsgId)</div>
@@ -238,7 +239,7 @@ Usage</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Aug 24 2022 21:28:57 for Theory of Mind + Abduction by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Oct 13 2022 12:16:23 for Theory of Mind + Abduction by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
