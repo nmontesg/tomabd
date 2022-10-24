@@ -372,8 +372,8 @@ public class HanabiGame extends Environment {
         }
         addPercept(agent, Literal.parseLiteral(String.format("has_card_color(%s,%d,%s)", agent, slot, card.getColor())));
         addPercept(agent, Literal.parseLiteral(String.format("has_card_rank(%s,%d,%d)", agent, slot, card.getRank())));
-        addPercept(Literal.parseLiteral(String.format("knows(%s,has_card_color(%s,%d,%s) [source(percept)]) [domain(hanabi)]", agent, agent, slot, card.getColor())));
-        addPercept(Literal.parseLiteral(String.format("knows(%s,has_card_rank(%s,%d,%d) [source(percept)]) [domain(hanabi)]", agent, agent, slot, card.getRank())));
+        addPercept(Literal.parseLiteral(String.format("believes(%s,has_card_color(%s,%d,%s) [source(percept)]) [domain(hanabi)]", agent, agent, slot, card.getColor())));
+        addPercept(Literal.parseLiteral(String.format("believes(%s,has_card_rank(%s,%d,%d) [source(percept)]) [domain(hanabi)]", agent, agent, slot, card.getRank())));
         return true;
     }
 
@@ -389,8 +389,8 @@ public class HanabiGame extends Environment {
             removePerceptsByUnif(ag, Literal.parseLiteral(String.format("has_card_rank(%s,%d,_)", agent, slot)));    
         }
 
-        removePerceptsByUnif(Literal.parseLiteral(String.format("knows(%s,has_card_color(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
-        removePerceptsByUnif(Literal.parseLiteral(String.format("knows(%s,has_card_rank(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
+        removePerceptsByUnif(Literal.parseLiteral(String.format("believes(%s,has_card_color(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
+        removePerceptsByUnif(Literal.parseLiteral(String.format("believes(%s,has_card_rank(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
         
         String color = card.getColor();
         int rank = card.getRank();
@@ -474,8 +474,8 @@ public class HanabiGame extends Environment {
             removePerceptsByUnif(ag, Literal.parseLiteral(String.format("has_card_rank(%s,%d,_)", agent, slot)));    
         }
 
-        removePerceptsByUnif(Literal.parseLiteral(String.format("knows(%s,has_card_color(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
-        removePerceptsByUnif(Literal.parseLiteral(String.format("knows(%s,has_card_rank(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
+        removePerceptsByUnif(Literal.parseLiteral(String.format("believes(%s,has_card_color(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
+        removePerceptsByUnif(Literal.parseLiteral(String.format("believes(%s,has_card_rank(%s,%d,_) [source(percept)]) [domain(hanabi)]", agent, agent, slot)));
 
         String color = card.getColor();
         int rank = card.getRank();

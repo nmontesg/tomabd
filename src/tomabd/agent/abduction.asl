@@ -26,7 +26,7 @@ abduce(Goal, Delta0, Delta) [domain(independent)] :-
 // this is a domain-independent ToM rule to ensure that the abductive reasoning
 // steps are carried over when switching viewpoints
 
-knows(_, Rule) [domain(independent)] :-
+believes(_, Rule) [domain(independent)] :-
     tomabd.misc.rule(Rule) &
     tomabd.misc.rule_head_body(Rule, Head, _) &
     tomabd.misc.get_annots(Head, Annots) &

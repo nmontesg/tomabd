@@ -15,7 +15,7 @@
  * Other IAs in the \ref tomabd.misc package provide manipulations of
  * AgentSpeak constructs, such as literals, logical formulas and Prolog-like
  * rules. These are particularly handy for writing the Theory of Mind
- * clauses with head <tt>knows(Ag, Fact)</tt> (see \ref viewpoint).
+ * clauses with head <tt>believes(Ag, Fact)</tt> (see \ref viewpoint).
  * 
  * @author Nieves Montes
  * 
@@ -79,15 +79,15 @@
  * with</i>. We denote \f$i\f$'s estimation of \f$j\f$'s program by \f$T_{i,j}\f$.
  * \f$T_{i,j}\f$ is computed as follows:
  * \f{equation}{
- *      T_{i,j} = \{\phi \mid T_{i} \models \texttt{knows}(j, \phi)\}
+ *      T_{i,j} = \{\phi \mid T_{i} \models \texttt{believes}(j, \phi)\}
  *      \label{eq:tom}
  * \f}
  * 
- * Note that eq. \f$\eqref{eq:tom}\f$ makes a reference to a <tt>knows/2</tt>
+ * Note that eq. \f$\eqref{eq:tom}\f$ makes a reference to a <tt>believes/2</tt>
  * predicate. These predicates are specified in a component of the agents'
  * program known as <i>Theory of Mind (ToM) clauses</i>. These clauses specify
- * what the <i>agent knows about what other agents know</i>, hence they have 
- * head <tt>knows(Agent, Fact)</tt>. ToM clauses are domain-specific rules and
+ * what the <i>agent believes about what other agents believe</i>, hence they have 
+ * head <tt>believes(Agent, Fact)</tt>. ToM clauses are domain-specific rules and
  * they are queried to build an approximation of other agent's programs. Hence,
  * they operate as a meta-interpreter on the program \f$T_i\f$ of the agent
  * performing the ToM+Abd task.
@@ -98,7 +98,7 @@
  * recursively extended to any arbitrary level of Theory of Mind:
  * \f{equation}{
  *      T_{i,k, ..., l, j} = \{\phi \mid
- *          T_{i, k, ..., l} \models \texttt{knows}(j, \phi)\}
+ *          T_{i, k, ..., l} \models \texttt{believes}(j, \phi)\}
  *      \label{eq:tom-recursion}
  * \f}
  * 
@@ -178,7 +178,7 @@
  * The refined abductive explanation has to hold true. Consequently, <b>its
  * negation must be false</b>. We take advantage of this statement to
  * integrate the \f$\Phi^{Obs}\f$ into the agent program, as logical formulas
- * cannot be added to a Jason knowledge base, only ground literals. From the
+ * cannot be added to a Jason belief base, only ground literals. From the
  * negation of \f$\Phi^{Obs}\f$, we build a new <i>impossibility
  * constraint</i> (IC):
  * \f{equation}{
@@ -198,10 +198,10 @@
  * However, eq. \f$\eqref{eq:ic-actor}\f$ cannot be directly added to the 
  * original agent's program \f$T_i\f$. Some extra step has to account for
  * the fact that this explanation has been generated from viewpoint
- * \f$[k, l, ..., j]\f$. To achieve this, the following <tt>knows/2</tt> is
+ * \f$[k, l, ..., j]\f$. To achieve this, the following <tt>believes/2</tt> is
  * recursively built:
  * \f{equation}{
- *      \texttt{knows($k$, ..., knows($l$, knows($j$, imp [source(abduction)]
+ *      \texttt{believes($k$, ..., believes($l$, believes($j$, imp [source(abduction)]
  *          :- ... )) ... )}
  *      \label{eq:ic-observer}
  * \f}
@@ -216,7 +216,7 @@
  * the actor viewpoint. However, the ultimate goal is to update the model of
  * the world from the perspective of the <i>observer</i>. To do so, the whole
  * process of (i) refining the raw explanations; (ii) building the abductive
- * impossibility constraint; and (iii) building a new <tt>knows/2</tt> literal,
+ * impossibility constraint; and (iii) building a new <tt>believes/2</tt> literal,
  * is repeated, this time from the viewpoint of the <i>observer</i> agent. In
  * case the viewpoint of the observer corresponds directly to the original
  * agent \f$i\f$ (which happens if the Theory of Mind task is first-order), the
@@ -469,7 +469,7 @@ public class TomAbdAgent extends Agent {
                 return;
             }
             for (Term next : viewpoint) {
-                Literal query = Literal.parseLiteral(String.format("knows(%s,Phi)", next.toString()));
+                Literal query = Literal.parseLiteral(String.format("believes(%s,Phi)", next.toString()));
                 VarTerm phi = (VarTerm) query.getTerm(1);
                 Unifier u = new Unifier();
                 Iterator<Unifier> queryBindings = query.logicalConsequence(this, u);
@@ -502,8 +502,8 @@ public class TomAbdAgent extends Agent {
 
         for (Term t : e) {
             Literal f = (Literal) t;
-            boolean alreadyKnows = believes(f, u);
-            if (!alreadyKnows) {
+            boolean alreadyBelieves = believes(f, u);
+            if (!alreadyBelieves) {
                 ePrime.add(f);
             }
             u.clear();
@@ -617,7 +617,7 @@ public class TomAbdAgent extends Agent {
 
     /**
      * Given a viewpoint and an abductive \f$\texttt{imp}\f$ clause, build
-     * the corresponding recursive <tt>knows/2</tt> literal.
+     * the corresponding recursive <tt>believes/2</tt> literal.
      * 
      * @param viewpoint
      * @param abductiveIC
@@ -634,7 +634,7 @@ public class TomAbdAgent extends Agent {
 
         ListTerm annots = abductiveIC.getAnnots();
         Literal previous = abductiveIC.clone();
-        Literal next = Literal.parseLiteral("knows");
+        Literal next = Literal.parseLiteral("believes");
         next.setAnnots(annots);
 
         for (int i = viewpoint.size() - 1; i >= 0; i--) {
@@ -812,7 +812,7 @@ public class TomAbdAgent extends Agent {
 
     /**
      * Get the viewpoint and the set of explanations of an abductive IC or
-     * <tt>knows/2</tt> literal.
+     * <tt>believes/2</tt> literal.
      * 
      * @param l
      * @return Object[]
@@ -820,7 +820,7 @@ public class TomAbdAgent extends Agent {
      */
     private Object[] getAbdToMRuleComponents(Literal l) {
         ListTermImpl viewpoint = new ListTermImpl();
-        while (l.getFunctor().equals("knows")) {
+        while (l.getFunctor().equals("believes")) {
             Term next = l.getTerm(0);
             viewpoint.add(next);
             l = (Literal) l.getTerm(1);

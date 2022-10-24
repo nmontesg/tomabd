@@ -148,7 +148,7 @@ all_minus_me(L) [domain(hanabi)] :-
     .send(KQML_Sender_Var, tell, abduction_finished).
 
 
-knows(Ag, Fact [source(aux)]) [domain(hanabi)] :- player(Ag) & Fact [source(aux)].
+believes(Ag, Fact [source(aux)]) [domain(hanabi)] :- player(Ag) & Fact [source(aux)].
 
 
 /* ------------------------------ ABDUCIBLES ------------------------------ */
@@ -167,55 +167,55 @@ abducible(has_card_rank(Player, Slot, R)) [domain(hanabi)] :-
 
 /* ------------------------ THEORY OF MIND CLAUSES ------------------------ */
 
-knows(Ag, my_name(Ag) [source(self)]) [domain(hanabi)].
-knows(Ag, domain(hanabi) [source(self)]) [domain(hanabi)].
+believes(Ag, my_name(Ag) [source(self)]) [domain(hanabi)].
+believes(Ag, domain(hanabi) [source(self)]) [domain(hanabi)].
 
 
 // Percepts: Except Ag's own cards, all other percepts are shared.
 // has_card_color and has_card_rank are only available to Ag as percepts if
 // they don't refer to Ag's own cards.
 
-knows(Ag, P [source(percept)]) [domain(hanabi)] :-
+believes(Ag, P [source(percept)]) [domain(hanabi)] :-
     player(Ag) & 
     P [source(percept)] &
     P =.. [Functor, _, _] &
     Functor \== has_card_color &
     Functor \== has_card_rank.
 
-knows(Agi, has_card_color(Agj, S, C) [source(percept)]) [domain(hanabi)] :-
+believes(Agi, has_card_color(Agj, S, C) [source(percept)]) [domain(hanabi)] :-
     player(Agi) & player(Agj) & Agi \== Agj & slot(S) & color(C) &
     has_card_color(Agj, S, C) [source(percept)].
 
-knows(Agi, has_card_rank(Agj, S, R) [source(percept)]) [domain(hanabi)] :-
+believes(Agi, has_card_rank(Agj, S, R) [source(percept)]) [domain(hanabi)] :-
     player(Agi) & player(Agj) & Agi \== Agj & slot(S) & rank(R) &
     has_card_rank(Agj, S, R) [source(percept)].
 
-knows(Ag, has_card_color(Me, S, C) [source(percept)]) [domain(hanabi)] :-
+believes(Ag, has_card_color(Me, S, C) [source(percept)]) [domain(hanabi)] :-
     player(Ag) & my_name(Me) & slot(S) & color(C) &
     has_card_color(Me, S, C) [source(percept)].
 
-knows(Ag, has_card_rank(Me, S, R) [source(percept)]) [domain(hanabi)] :-
+believes(Ag, has_card_rank(Me, S, R) [source(percept)]) [domain(hanabi)] :-
     player(Ag) & my_name(Me) & slot(S) & rank(R) &
     has_card_rank(Me, S, R) [source(percept)].
 
 // Hints: information explicitly derived from hints is available to all other agents
 
-knows(Ag, P [source(hint)]) [domain(hanabi)] :- player(Ag) & P [source(hint)].
+believes(Ag, P [source(hint)]) [domain(hanabi)] :- player(Ag) & P [source(hint)].
 
 // Mental notes: as all agents share the same code, they all make the same
 // mental notes, which refer to the hints given and the ordered slots of
 // the players
 
-knows(Ag, hint(Id, FromPlayer, ToPlayer, Mode, Value, Slots) [source(self)]) [domain(hanabi)] :-
+believes(Ag, hint(Id, FromPlayer, ToPlayer, Mode, Value, Slots) [source(self)]) [domain(hanabi)] :-
     player(Ag) & hint(Id, FromPlayer, ToPlayer, Mode, Value, Slots) [source(self)].
 
-knows(Agi, ordered_slots(Agj, Slots) [source(self)]) [domain(hanabi)] :-
+believes(Agi, ordered_slots(Agj, Slots) [source(self)]) [domain(hanabi)] :-
     player(Agi) & player(Agj) & ordered_slots(Agj, Slots) [source(self)].
 
-// all other agents know have the same clauses as myself, including tom clauses,
+// all other agents believe have the same clauses as myself, including tom clauses,
 // domain-related ICs, etc. This is made explicit now.
 
-knows(Ag, Rule) [domain(hanabi)] :-
+believes(Ag, Rule) [domain(hanabi)] :-
     player(Ag) &
     tomabd.misc.rule(Rule) &
     tomabd.misc.rule_head_body(Rule, Head, _) &
