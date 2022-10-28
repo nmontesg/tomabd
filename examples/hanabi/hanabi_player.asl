@@ -57,7 +57,7 @@ all_minus_me(L) [domain(hanabi)] :-
 @selectAction[domain(hanabi), atomic]
 +!select_action : .my_name(Me)
     <- tomabd.agent.select_action(Action, Priority);
-    // .log(info, Action, " (", Priority, ")");
+    .log(info, Action, " (", Priority, ")");
     +selected_action(Action);
     .broadcast(publicAction, Action).
 
@@ -66,7 +66,7 @@ all_minus_me(L) [domain(hanabi)] :-
 -!select_action : .my_name(Me) & spent_info_tokens
     <- ?ordered_slots(Me, [H|_]);
     Action = discard_card(H);
-    // .log(info, Action, " (fail) ");
+    .log(info, Action, " (fail) ");
     +selected_action(Action);
     .broadcast(publicAction, Action).
 

@@ -1,361 +1,363 @@
 /**
  * \mainpage tomabd documentation
- * 
+ *
  * This package provides a <a href="http://jason.sourceforge.net">Jason</a>
  * agent that combines Theory of Mind and abductive reasoning to interpret and
  * extract information from the actions of other agents.
- * 
+ *
  * The main class of this package is \ref tomabd.agent.TomAbdAgent, since it
- * contains the methods that implement the actual computations. Other
- * classes in the \ref tomabd.agent package are
- * <a href="http://jason.sourceforge.net/api/jason/stdlib/package-summary.html">
+ * contains the methods that implement the actual computations. Other classes
+ * in the \ref tomabd.agent package are <a
+ * href="http://jason.sourceforge.net/api/jason/stdlib/package-summary.html">
  * Jason internal actions</a> (IAs) that provide an interface to the public
  * methods of the \ref tomabd.agent.TomAbdAgent class that are most likely to
  * be invoked from the AgentSpeak code.
+ *
  * Other IAs in the \ref tomabd.misc package provide manipulations of
  * AgentSpeak constructs, such as literals, logical formulas and Prolog-like
- * rules. These are particularly handy for writing the Theory of Mind
- * clauses with head <tt>believes(Ag, Fact)</tt> (see \ref viewpoint).
- * 
+ * rules. These are particularly handy for writing the Theory of Mind clauses
+ * with head <tt>believes(Ag, Fact)</tt> (see \ref viewpoint).
+ *
  * @author Nieves Montes
- * 
+ *
  * \section model Agent model
- * 
+ *
  * For an example to help understand the discussion that follows, the reader is
  * directed to the <a href="...">examples folder</a>.
- * 
- * The agent model that this package implements revolves around <b>Theory of
- * Mind + abduction (Tom+Abd) task</b>. One task is composed of roughly these
- * steps:
- *      -# Adopt the <ins>acting agent viewpoint</ins>.
- *      -# Generate abductive explanations.
- *      -# Refine abductive explanations from the acting agent viewpoint.
- *      -# Adopt the <ins>observer agent viewpoint</ins>.
- *      -# Refine abductive explanations from the observer agent viewpoint.
- * 
- * Steps 1 and 4 are covered in \ref viewpoint. Steps 2, and 3 and 5 are 
- * covered in abduction.
- * 
+ *
+ * The agent model that this package implements revolves around the function
+ * <b>TomAbductionTask</b>, implemented by \ref
+ * tomabd.agent.TomAbdAgent.tomAbductionTask. One execution of this
+ * functiontask is composed of these steps:
+ *
+ * -# Adopt the <ins>acting agent point of view</ins>.
+ *
+ * -# Generate abductive explanations.
+ *
+ * -# Refine abductive explanations from the acting agent point of view.
+ *
+ * -# Adopt the <ins>observer agent point of view</ins>.
+ *
+ * -# Refine abductive explanations from the observer agent point of view.
+ *
+ * Steps 1 and 4 are covered in \ref viewpoint. Steps 2, and 3 and 5 are
+ * covered in \ref abduction.
+ *
  * To set the scene, consider the following:
- *      - Agent \f$i\f$ operating with logic program \f$T_i\f$. refer to agent
- *      \f$i\f$ as the <b>observer agent</b>. Agent \f$i\f$ will be the one
- *      performing a ToM+Abd task.
- *      - Agent \f$j\f$, operating with logic program \f$T_j\f$. We refer to
- *      agent \f$j\f$ as the <b>actor</b> or <b>acting agent</b>.
- * 
- * In BDI terms, the agents' logic programs correspond to their belief bases, 
- * i.e. a set of symbolic facts and rules.
- * 
- * An underlying assumption of this agent model is that agents select their
- * actions according to a set of <b>action selection clauses</b>. This is a set
- * of Prolog-like rules: <tt>action(Agent, Action) :- ...</tt> . These clauses
- * indicate what action should be taken by every agent given their current
- * perception of the system. These clauses are necessary because actions are
- * the queries that need to be explained by the abductive reasoning process
- * (see \ref abduction).
- * 
+ *
+ * - Agent \f$i\f$ operating with logic program \f$T_i\f$. We refer to agent
+ *   \f$i\f$ as the <b>observer agent</b>. Agent \f$i\f$ will be the one
+ *   executing <b>TomAbductionTask</b>.
+ *
+ * - Agent \f$j\f$, operating with logic program \f$T_j\f$. We refer to agent
+ *   \f$j\f$ as the <b>acting agent</b>.
+ *
+ * Agents select their actions according to a set of <b>action selection
+ * clauses</b>. This is a set of Prolog-like rules: <tt>action(Agent, Action)
+ * :- ...</tt> . These clauses indicate what action should be taken by every
+ * agent given their current perception of the world. These clauses are
+ * necessary because actions by others are the observations that need to be
+ * explained using abductive reasoning (see \ref abduction).
+ *
  * \subsection viewpoint Adopting a different viewpoint
- * 
+ *
  * At some time-step, the acting agent \f$j\f$ selects an action \f$a_j\f$ to
  * be executed. Observer agent \f$i\f$ comes to learn that \f$j\f$ has indeed
  * selected \f$a_j\f$. The particular mechanism by which this happens is left
  * as a domain-specific choice for the developer (see \ref usage section).
- * 
- * <b>Note:</b> The action \f$a_j\f$ <i>does not necessarily correspond to an
- * agent action on the environment</i>. It can also be, for example, an
- * achievement goal that is pursued by a plan composed of several atomic
- * actions on the environment. Whichever way \f$a_j\f$ is actually implemented
- * is left as a domain-specific choice to be made by the MAS developer.
- * 
- * When \f$i\f$ learns about \f$j\f$'s action choice, \f$i\f$ seeks to
- * <i>understand</i> the reasons and motivations behind this decision. To do
- * so, \f$i\f$ embarks on a <b>ToM+Abd task</b>.
- * 
+ *
+ * When \f$i\f$ learns about \f$j\f$'s action of choice, \f$i\f$ seeks to inder
+ * the reasons and motivations behind this decision. To do so, \f$i\f$ embarks
+ * on a <b>TomAbductionTask</b>.
+ *
  * First, \f$i\f$ engages in Theory of Mind and substitutes its view of the
  * world by <i>the view that it estimates \f$j\f$ has of the world</i>. By
  * doing so, the observer agent \f$i\f$ is putting itself in the shoes of the
  * acting agent \f$j\f$. Computationally, \f$i\f$ substitutes its program
- * \f$T_i\f$ by the program it <i>estimates that \f$j\f$ is operating
- * with</i>. We denote \f$i\f$'s estimation of \f$j\f$'s program by \f$T_{i,j}\f$.
- * \f$T_{i,j}\f$ is computed as follows:
- * \f{equation}{
- *      T_{i,j} = \{\phi \mid T_{i} \models \texttt{believes}(j, \phi)\}
- *      \label{eq:tom}
- * \f}
- * 
- * Note that eq. \f$\eqref{eq:tom}\f$ makes a reference to a <tt>believes/2</tt>
- * predicate. These predicates are specified in a component of the agents'
- * program known as <i>Theory of Mind (ToM) clauses</i>. These clauses specify
- * what the <i>agent believes about what other agents believe</i>, hence they have 
- * head <tt>believes(Agent, Fact)</tt>. ToM clauses are domain-specific rules and
- * they are queried to build an approximation of other agent's programs. Hence,
- * they operate as a meta-interpreter on the program \f$T_i\f$ of the agent
+ * \f$T_i\f$ by the program it <i>estimates that \f$j\f$ is operating with</i>.
+ * We denote \f$i\f$'s estimation of \f$j\f$'s program by \f$T_{i,j}\f$, which
+ * is computed as follows:
+ *
+ * \f{equation}{ T_{i,j} = \{\phi \mid T_{i} \models \texttt{believes}(j,
+ * \phi)\} \label{eq:tom} \f}
+ *
+ * Note that eq. \f$\eqref{eq:tom}\f$ makes a reference to a
+ * <tt>believes/2</tt> predicate. These predicates are known as <i>Theory of
+ * Mind (ToM) clauses</i>. These clauses specify what the <i>agent believes
+ * about what other agents believe</i>. Hence, they have head
+ * <tt>believes(Agent, Fact)</tt>. ToM clauses are domain-specific and they are
+ * queried to build an approximation of other agents' programs. Hence, they
+ * operate as a meta-interpreter on the program \f$T_i\f$ of the agent
  * performing the ToM+Abd task.
- * 
- * Eq. \f$\eqref{eq:tom}\f$ formulates <i>first-order</i> Theory of Mind.
- * This means that agent \f$i\f$ tries to view the world the way that it thinks
+ *
+ * Eq. \f$\eqref{eq:tom}\f$ formulates <i>first-order</i> Theory of Mind. This
+ * means that agent \f$i\f$ tries to view the world in the way that it thinks
  * \f$j\f$ is perceiving it. However, eq. \f$\eqref{eq:tom}\f$ can be
  * recursively extended to any arbitrary level of Theory of Mind:
- * \f{equation}{
- *      T_{i,k, ..., l, j} = \{\phi \mid
- *          T_{i, k, ..., l} \models \texttt{believes}(j, \phi)\}
- *      \label{eq:tom-recursion}
- * \f}
- * 
+ *
+ * \f{equation}{ T_{i,k, ..., l, j} = \{\phi \mid T_{i, k, ..., l} \models
+ * \texttt{believes}(j, \phi)\} \label{eq:tom-recursion} \f}
+ *
  * For example, \f$i\f$ might want to know how \f$j\f$ is estimating that
  * \f$k\f$ is perceiving the world. This corresponds to \f$T_{i,j,k}\f$, a
  * <i>second-order</i> Theory of Mind substitution. In particular, it might be
  * the case that \f$i\f$ wants to know how \f$j\f$ is estimating its own
  * (\f$i\f$'s) view. This corresponds to \f$T_{i,j,i}\f$.
- * 
+ *
  * For the discussion that follows, we use the following notation in reference
  * to the symbols in \f$\eqref{eq:tom-recursion}\f$:
- *      - The sequence \f$[k, ..., l, j]\f$ is the <i>actor viewpoint</i>
- *      (excluding the first index of the original agent \f$i\f$).
- *      - The last element of the sequence (\f$j\f$) is the
- *      <i>acting agent</i>.
- *      - The sequence excluding the last element (the actor),
- *      \f$[j, ..., k]\f$, is the <i>observer viewpoint</i>.
- * 
- * In order for the observer agent \f$i\f$ to interpret tha acting agent
+ *
+ * - The sequence \f$[i, k, ..., l, j]\f$ is the <i>actor viewpoint</i>.
+ *
+ * - The last element of the sequence (\f$j\f$) is the <i>acting agent</i>.
+ *
+ * - The sequence excluding the last element (the actor), \f$[i, j, ..., k]\f$,
+ *   is the <i>observer viewpoint</i>.
+ *
+ * In order for the observer agent \f$i\f$ to interpret the acting agent
  * \f$j\f$'s action, \f$i\f$ needs to switch its perspective to that of the
- * agent. This may mean adopting its direct estimation of \f$j\f$'s program
- * (\f$T_{i,j}\f$) in a <b>first-order</b> ToM+abd task, or through several
- * intermediaries (\f$T_{i,k, ..., l, j}\f$) in a <b>higher-order</b> ToM+abd
- * task. Either way, the substitution of the original agent program by a new
- * (arbitrary) viewpoint is implemented by the
- * \ref tomabd.agent.TomAbdAgent.adoptViewpoint method.
- * 
+ * actor. This may mean adopting a direct estimation of \f$j\f$'s program
+ * (\f$T_{i,j}\f$) in a <i>first-order</i> ToM+abd task, or through several
+ * intermediaries (\f$T_{i,k, ..., l, j}\f$) in a <i>higher-order</i>
+ * <b>TomAbductionTask</b> function execution. Either way, the substitution of
+ * the original agent program by a new point of view is implemented by the \ref
+ * tomabd.agent.TomAbdAgent.adoptViewpoint method.
+ *
  * \subsection abduction Generating and refining abductive explanations
- * 
- * Once observer \f$i\f$ has adopted acting agent viewpoint, the observer is
- * in a position to <i>explain</i> why the actor selected action \f$a_j\f$,
- * in hopes that this newly derived knowledge will be useful for his own later
- * decision-making. This <i>inference to the best explanation</i> is called
- * <b>abductive reasoning</b>. In order to compute abductive explanations, it
- * is necessary to specify, in a domain-specific way the set of
+ *
+ * Once observer \f$i\f$ has adopted acting agent point of view, the observer
+ * is in a position to infer the reasons why the actor selected action
+ * \f$a_j\f$, in hopes that this newly derived knowledge will be useful for his
+ * own later decision-making. This <i>inference to the best explanation</i> is
+ * called <b>abductive reasoning</b>. In order to compute abductive
+ * explanations, it is necessary to specify, for the current domain, the set of
  * <b>abducible facts</b>. These are the facts that can possibly compliment a
  * belief base. These are specified through a set of clauses with head
  * <tt>abducible(Fact)</tt>.
- * 
+ *
  * The \ref tomabd.agent.TomAbdAgent class automatically loads an abductive
- * meta-interpreter. Given query \f$Q = \texttt{action}(j, a_j)\f$, the
- * abductive meta-interpreter generates a set of <i>raw explanations</i>
- * \f$\Phi\f$, composed of <i>ground</i> abducible facts. This set of raw
- * explanations can be represented in <i>disjunctive normal form</i> (DNF):
- * \f{equation}{
- *      \Phi = (\phi_{11} \; \land \; ... \; \land \; \phi_{1n_1})
- *              \; \lor \; ... \; \lor \;
- *             (\phi_{m1} \; \land \; ... \; \land \; \phi_{mn_m})
- *      \label{eq:dnf}
- * \f}
- * where all \f$\phi_{rs}\f$ are derivable from the current belief base,
- * i.e. \f$T_{i, k, ..., l, j} \models \texttt{abducible}(\phi_{rs})\f$.
- * Within the agent class, this DNF is implemented as a list of lists.
- * 
- * The raw explanations \f$\Phi\f$ need to be <i>refined</i>, first of all,
- * with respect to the viewpoint of the acting agent (i.e. the viewpoint from
- * which they were generated in the first place). This steps allos the
- * opportunity to further modify the raw abductive explanations to, for
- * example, check for inconsistencies with respect to the current agent
- * program \f$T_{i,j,...,k,l}\f$. This <b>explanation refinement step</b> is
- * implemented by the method \ref tomabd.agent.TomAbdAgent.erf.
- * The default computation performs the two following refinement steps:
- *      -# First, for every potential explanation (i.e. every disjunct in
- *      \f$\eqref{eq:dnf}\f$), uninformative atoms are removed.
- *      -# Second, disjuncts that are incompatible with the <i>impossibility
- *      constraints</i> in the current program\f$T_{i,j,...,k,l}\f$ (i.e. at
- *      the acting agent viewpoint) are removed.
- * 
+ * meta-interpreter at initialization time. Given query \f$Q =
+ * \texttt{action}(j, a_j)\f$, the abductive meta-interpreter generates a set
+ * of <i>raw explanations</i> \f$\Phi\f$, composed of ground abducible facts.
+ * This set of raw explanations can be represented in disjunctive normal form
+ * (DNF):
+ *
+ * \f{equation}{ \Phi = (\phi_{11} \; \land \; ... \; \land \; \phi_{1n_1}) \;
+ * \lor \; ... \; \lor \; (\phi_{m1} \; \land \; ... \; \land \; \phi_{mn_m})
+ * \label{eq:dnf} \f}
+ *
+ * where all \f$\phi_{rs}\f$ are derivable from the current belief base, i.e.
+ * \f$T_{i, k, ..., l, j} \models \texttt{abducible}(\phi_{rs})\f$. Within the
+ * agent class, this DNF is implemented as a list of lists.
+ *
+ * The raw explanations \f$\Phi\f$ need to be post-processed. First, this is
+ * done with respect to the viewpoint of the acting agent. This step allows the
+ * opportunity to refine the raw explanations to, for example, check for
+ * inconsistencies with respect to the current agent program. This explanation
+ * refinement step is implemented by the method \ref
+ * tomabd.agent.TomAbdAgent.erf, which can be overridden by the MAS developer
+ * depending on the application's needs. The default computation performs these
+ * two steps:
+ *
+ * -# First, for every potential explanation (i.e. every disjunct in
+ * \f$\eqref{eq:dnf}\f$), uninformative atoms are removed.
+ *
+ * -# Second, disjuncts that are incompatible with the impossibility
+ * constraints in the current program \f$T_{i,j,...,k,l}\f$ (i.e. at the acting
+ * agent viewpoint) are removed.
+ *
  * The refined explanations with respect to the observer viewpoint are denoted
- * by \f$\Phi^{obs}\f$:
- * \f{equation}{
- *      \Phi^{obs} = (\phi_{11}' \; \land \; ... \; \land \; \phi_{1n_1'}')
- *                   \; \lor \; ... \; \lor \;
- *                   (\phi_{m'1}' \; \land \; ... \; \land \; \phi_{m'n_{m'}'}')
- * \f}
- * 
- * The refined abductive explanation has to hold true. Consequently, <b>its
- * negation must be false</b>. We take advantage of this statement to
- * integrate the \f$\Phi^{Obs}\f$ into the agent program, as logical formulas
- * cannot be added to a Jason belief base, only ground literals. From the
- * negation of \f$\Phi^{Obs}\f$, we build a new <i>impossibility
- * constraint</i> (IC):
- * \f{equation}{
- *      \texttt{imp [source(abduction)] :- }
- *          (\sim\phi_{11}' \; \texttt{|} \; ... \; \texttt{|} \;
- *              \sim\phi_{1n_1'}')
- *          \; \texttt{&} \; ... \; \texttt{&} \;
- *          (\sim\phi_{m'1}' \; \texttt{|} \; ... \; \texttt{|} \;
- *              \sim\phi_{m'n_{m'}'}').
- *      \label{eq:ic-actor}
- * \f}
- * 
- * Note the <tt>source(abduction)</tt> annotation to indicate that this IC
- * is derived from an abductive reasoning process and is <i>not</i> a 
- * domain-dependent IC.
- * 
- * However, eq. \f$\eqref{eq:ic-actor}\f$ cannot be directly added to the 
- * original agent's program \f$T_i\f$. Some extra step has to account for
- * the fact that this explanation has been generated from viewpoint
- * \f$[k, l, ..., j]\f$. To achieve this, the following <tt>believes/2</tt> is
- * recursively built:
- * \f{equation}{
- *      \texttt{believes($k$, ..., believes($l$, believes($j$, imp [source(abduction)]
- *          :- ... )) ... )}
- *      \label{eq:ic-observer}
- * \f}
- * 
- * To allow for flexibility, the method responsible for the Tom+Abd task
- * (\ref tomabd.agent.TomAbdAgent.tomAbductionTask) does not add the
- * generated abductive impossibility constraints in eqs.
- * \f$\eqref{eq:ic-actor}\f$ and \f$\eqref{eq:ic-observer}\f$. That is left as
- * an implementation-dependent choice.
- * 
- * This process allows to update the original agent's (\f$i\f$'s) model of
- * the actor viewpoint. However, the ultimate goal is to update the model of
- * the world from the perspective of the <i>observer</i>. To do so, the whole
- * process of (i) refining the raw explanations; (ii) building the abductive
- * impossibility constraint; and (iii) building a new <tt>believes/2</tt> literal,
- * is repeated, this time from the viewpoint of the <i>observer</i> agent. In
- * case the viewpoint of the observer corresponds directly to the original
- * agent \f$i\f$ (which happens if the Theory of Mind task is first-order), the
- * returned literal is directly of the form in eq. \f$\eqref{eq:ic-actor}\f$.
- * 
+ * by \f$\Phi^{obs}\f$: \f{equation}{ \Phi^{obs} = (\phi_{11}' \; \land \; ...
+ * \; \land \; \phi_{1n_1'}') \; \lor \; ... \; \lor \; (\phi_{m'1}' \; \land
+ * \; ... \; \land \; \phi_{m'n_{m'}'}') \f}
+ *
+ * The refined abductive explanation has to hold true, but logical formular
+ * cannot be directly added to a Jason belief base. However, the negation of
+ * the explanation must be false. We take advantage of this to integrate the
+ * \f$\Phi^{Obs}\f$ into the agent's program. From the negation of
+ * \f$\Phi^{Obs}\f$, we build a new <i>impossibility constraint</i>:
+ *
+ * \f{equation}{ \texttt{imp [source(abduction)] :- } (\sim\phi_{11}' \;
+ * \texttt{|} \; ... \; \texttt{|} \; \sim\phi_{1n_1'}') \; \texttt{&} \; ...
+ * \; \texttt{&} \; (\sim\phi_{m'1}' \; \texttt{|} \; ... \; \texttt{|} \;
+ * \sim\phi_{m'n_{m'}'}'). \label{eq:ic-actor} \f}
+ *
+ * Note the <tt>source(abduction)</tt> annotation to indicate that this IC is
+ * derived from an abductive reasoning process and is <i>not</i> a
+ * domain-dependent constraint.
+ *
+ * However, eq. \f$\eqref{eq:ic-actor}\f$ should not be directly added to the
+ * original agent's program \f$T_i\f$. Some extra step has to account for the
+ * fact that this explanation has been generated from viewpoint \f$[i, k, l,
+ * ..., j]\f$. To achieve this, the following nested <tt>believes/2</tt>
+ * literal is generated:
+ *
+ * \f{equation}{ \texttt{believes($k$, ..., believes($l$, believes($j$, imp
+ * [source(abduction)] :- ... )) ... )} \label{eq:ic-observer} \f}
+ *
+ * To allow flexibility, the method responsible for <b>TomAbductionTask</b>
+ * (\ref tomabd.agent.TomAbdAgent.tomAbductionTask) does not add the generated
+ * abductive impossibility constraints in eqs. \f$\eqref{eq:ic-actor}\f$ and
+ * \f$\eqref{eq:ic-observer}\f$. That is left as domain-dependent choice, to be
+ * decided by the developer of the application.
+ *
+ * This process allows to update the original agent \f$i\f$'s model of the
+ * actor point of view. However, the ultimate goal is to update the model of
+ * the world from the perspective of the observer. To do so, the whole process
+ * of (i) refining the raw explanations; (ii) building the abductive
+ * impossibility constraint; and (iii) building a new <tt>believes/2</tt>
+ * literal, is repeated, this time from the viewpoint of the <i>observer</i>
+ * agent. In case the viewpoint of the observer corresponds directly to the
+ * original agent \f$i\f$ (which happens if <b>TomAbductionTask</b> is of
+ * first-order), the returned literal is directly of the form in eq.
+ * \f$\eqref{eq:ic-actor}\f$.
+ *
  * \subsection euf Updating abductive explanation
- * 
- * Abductive explanation, once generated, will not be valid <i>forever</i>.
- * Therefore, the \ref tomabd.agent.TomAbdAgent has a custom belief
- * update function that includes a call to te <b>explanation update
- * function</b> (euf). The default implementation follows these steps:
+ *
+ * Abductive explanation, once generated, will not be valid forever, since the
+ * environment is dynamic. Therefore, the \ref tomabd.agent.TomAbdAgent has a
+ * custom belief update function (BUF) that includes a call to an explanation
+ * update function (EUF). The default implementation of EUF follows these
+ * steps:
+ *
  * -# Update the belief base according to <tt>buf()</tt>.
- * -# For every literal originated in an abductive reasoning process
- *    (annotated with <tt>source(abduction)</tt>):
+ *
+ * -# For every literal originated in an abductive reasoning process (annotated
+ * with <tt>source(abduction)</tt>):
+ *
  *      -# Extract the <i>viewpoint</i> at which it was generated and the
- *         associated explanation.
+ *      associated explanation.
+ *
  *      -# Adopt the <i>viewpoint</i> in question.
+ *
  *      -# If the associated explanation can now be derived from the current
- *         program, drop the abductive literal from \f$T_i\f$, since it is no
- *         longer informative.
- * 
- * This default explanation update function is implemented in the 
- * \ref tomabd.agent.TomAbdAgent.euf method, and can be overridden by the MAS
+ *      program, drop the abductive literal from \f$T_i\f$, since it is no
+ *      longer informative.
+ *
+ * This default explanation update function is implemented in the \ref
+ * tomabd.agent.TomAbdAgent.euf method, and can be overridden by the MAS
  * developer in a custom subclass.
- * 
+ *
  * \subsection action-selection Action selection
- * 
+ *
  * The whole purpose of the ToM+Abd task is to have the observer agent \f$i\f$
- * in a <i>better informed position</i> when it is \f$i\f$'s turn to act,
- * thanks to the additional knowledge contained in the abductive ICs. Hence,
- * this package also implements a basic action selection function that takes 
- * into account impossibility constraints derived from previous abduction
- * tasks. The default implementation uses all ICs (abductive and 
- * domain-specific) to perform <i>possible worlds reasoning</i>. When
- * querying the action selection rules, the interpreter may come across a 
- * sub-goal that, according to \f$T_i\f$, is <i>abducible</i>. Then,
- * the action selection function looks for all the possible
- * instantiations of this abducible sub-goal. If all of the possible
- * instantiations lead to the same being selected, that action is returned.
- * This is a fairly restrictive action selection mechanisms, however it can
- * be overridden by the MAS developer easily.
- * 
- * This default action selection is implemented in the agent method
- * \ref tomabd.agent.TomAbdAgent.selectAction. The internal action
- * \ref tomabd.agent.select_action is an interface to this method,
- * so that it can be called from the AgentSpeak code (see the following
- * section).
- * 
+ * in a more informed position when it is \f$i\f$'s turn to act, thanks to the
+ * additional knowledge derived from <b>TomAbductionTask</b>. Hence, this
+ * package also implements a basic action selection function that takes into
+ * account impossibility constraints derived from abductive reasonings.
+ *
+ * The default implementation uses all constraints (abductive and
+ * domain-specific) to reson over all possible worlds. When querying the action
+ * selection rules, the interpreter may come across a sub-goal that, according
+ * to \f$T_i\f$, is abducible. Then, the action selection function looks for
+ * all the possible instantiations of this abducible sub-goal. If all of the
+ * possible instantiations lead to the same action being selected, that action
+ * is returned. This is a fairly restrictive action selection mechanisms,
+ * however it can be overridden by the MAS developer.
+ *
+ * This default action selection is implemented in the agent method \ref
+ * tomabd.agent.TomAbdAgent.selectAction. The internal action \ref
+ * tomabd.agent.select_action is an interface to this method, so that it can be
+ * called from the AgentSpeak code (see the following section).
+ *
  * \section usage Usage
- * 
- * This package should be used in multi-agent systems developed using
- * <a href="http://jason.sourceforge.net">Jason</a>. It is also compatible
- * with <a href="http://jacamo.sourceforge.net">JaCaMo</a> (since JaCaMo is
- * an integration of Jason with other agent-oriented programming tools).
- * The recommended way to use this package is to download a copy of the jar
- * file and add it to your project's class-path.
- * 
+ *
+ * This package should be used in multi-agent systems developed using <a
+ * href="http://jason.sourceforge.net">Jason</a> or <a
+ * href="http://jacamo.sourceforge.net">JaCaMo</a>. The recommended way to use
+ * this package is to download a copy of the jar file and add it to the
+ * project's class-path.
+ *
  * In Jason (.mas2j file):
- * \code{.mas2j}
- * MAS myMAS {
- * 
+ *
+ * \code{.mas2j} MAS myMAS {
+ *
  *      agents: ...
- *      
+ *
  *      environment: ...
- * 
+ *
  *      classpath: "path/to/tomabd.jar";
- * 
+ *
  * }
  * \endcode
- * 
+ *
  * In JaCaMo (.jcm file):
- * \code{.jcm}
- * mas myMAS {
- * 
+ *
+ * \code{.jcm} mas myMAS {
+ *
  *      // agents configuration
  *      ...
- *      
+ *
  *      // environment configuration
  *      ...
- * 
- *      // organizations configuration
+ *
+ *      // organization configuration
  *      ...
- * 
+ *
  *      // execution configuration
  *      class-path: path/to/tomabd.jar
  *      ...
- *      
+ *
  * }
  * \endcode
- * 
- * To trigger a Theory of Mind plus abduction task from the AgentSpeak code,
- * invoke the internal action \ref tomabd.agent.tom_abduction_task :
- * \code{.asl}
- * +!g : c
+ *
+ * To trigger the execution of <b>TomAbductionTask</b> from the AgentSpeak
+ * code, invoke the internal action \ref tomabd.agent.tom_abduction_task:
+ *
+ * \code{.asl} +!g : c
  *      <- ...;
  *      tomabd.agent.tom_abduction_task(
  *          ObserverViewpoint,               // a list
  *          ActingAgent,                     // an atom
  *          Action,                          // an atom
- *          ActorViewpointExplanation,       // a variable that is bound by the IA
- *          ObserverViewpointExplanations,   // a variable that is bound by the IA
- *          ActorAbductiveTomRule,           // a variable that is bound by the IA
- *          ObserverAbductiveTomRule,        // a variable that is bound by the IA
- *          ElapsedTime                      // a variable that is bound by the IA
+ *          ActorViewpointExplanation,       // bound by the IA
+ *          ObserverViewpointExplanations,   // bound by the IA
+ *          ActorAbductiveTomRule,           // bound by the IA
+ *          ObserverAbductiveTomRule,        // bound by the IA
+ *          ElapsedTime                      // bound by the IA
  *      );
  *      ...
  * \endcode
- * 
- * The decision on when to invoke this IA is domain-specific and is left to
- * the MAS developer. For example, in the Hanabi game a custom KQML
- * performative <tt>publicAction</tt> is used to announce the selected action.
- * A reception of a message with this performative triggers a Theory of Mind --
- * abduction task:
- * \code{.asl}
- * !kqml_received(KQML_Sender_Var, publicAction, Action, KQML_MsgId)
+ *
+ * The decision when to invoke this IA is domain-specific and is left to the
+ * MAS developer. For example, in the Hanabi game a custom KQML performative
+ * <tt>publicAction</tt> is used to announce the selected action. A reception
+ * of a message with this performative triggers the execution of
+ * <b>TomAbductionTask</b>:
+ *
+ * \code{.asl} !kqml_received(KQML_Sender_Var, publicAction, Action,
+ * KQML_MsgId) : c
  *      <- ...
  *      // first-order Theory of Mind -- abduction task
  *      tomabd.agent.tom_abduction_task(
- *          [], KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomTule, ObsTomRule
+ *          [],
+ *          KQML_Sender_Var,
+ *          Action,
+ *          ActExpls,
+ *          ObsExpls,
+ *          ActTomTule,
+ *          ObsTomRule
  *      );
  *      ...
  * \endcode
- * 
+ *
  * If one wishes to use the \ref tomabd.agent.TomAbdAgent.selectAction method
- * to select some or all of an agent's actions or goals to achieve next,
- * the IA \ref tomabd.agent.select_action acts as an interface to this method.
- * Its usage is as follows:
+ * to select the next agent action, the IA \ref tomabd.agent.select_action acts
+ * as an interface to this method. It is used as follows:
+ *
  * \code{.asl}
  * +!g : c
  *      <- ...;
  *      tomabd.agent.select_action(
- *          Action,         // a variable that is bound by the IA
- *          Priority        // a variable that is bound by the IA
+ *          Action,         // bound by the IA
+ *          Priority        // bound by the IA
  *      );
- *      ...;
- *      Action;             // if the action is modelled as an action on the environment, or
- *      !Action;            // if the action is modelled as an achievement goal
+ *      (!)Action;
  *      ...
  * \endcode
+ *
+ * Use the <tt>!</tt> prefix on <tt>Action</tt> if it is modelled as an
+ * achievement goal.
  */
 
 /**
@@ -368,6 +370,7 @@ package tomabd.agent;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeMap;
@@ -854,7 +857,6 @@ public class TomAbdAgent extends Agent {
             Object[] result = new Object[2];
 
             for (Rule rule : sortedActionRules) {
-
                 // bind Agent variable to the name of the agent
                 Literal head = rule.getHead();
                 VarTerm agVar = (VarTerm) head.getTerm(0);
@@ -946,12 +948,12 @@ public class TomAbdAgent extends Agent {
 
     /**
      * Get the set of action selection rules sorted by their <tt>priority</tt>
-     * annotation.
+     * annotation in descending order.
      * 
      * @return Collection<Rule>
      */
     private Collection<Rule> getSortedActionRules() {
-        TreeMap<Double, Rule> sortedActionRules = new TreeMap<Double, Rule>();
+        TreeMap<Double, Rule> sortedActionRules = new TreeMap<Double, Rule>(Collections.reverseOrder());
         for (Literal l : bb) {
             if (l.isRule()) {
                 Rule r = (Rule) l;
@@ -1016,13 +1018,13 @@ public class TomAbdAgent extends Agent {
         Atom selectedAction = null;
         Unifier un = new Unifier();
         Iterator<Unifier> answers = q.logicalConsequence(this, un);
-        Double selectedActionPriority = Double.MAX_VALUE;
+        Double selectedActionPriority = Double.MIN_VALUE;
 
         while (answers.hasNext()) {
             Unifier a = answers.next();
             try {
                 Double p = ((NumberTerm) a.get("P")).solve();
-                if (p < selectedActionPriority) {
+                if (p > selectedActionPriority) {
                     selectedActionPriority = p;
                     selectedAction = (Atom) a.get("Action");
                 }
