@@ -30,13 +30,13 @@
  * tomabd.agent.TomAbdAgent.tomAbductionTask. One execution of this
  * functiontask is composed of these steps:
  *
- * -# Adopt the <ins>acting agent point of view</ins>.
+ * -# Adopt the acting agent's point of view.
  *
  * -# Generate abductive explanations.
  *
  * -# Refine abductive explanations from the acting agent point of view.
  *
- * -# Adopt the <ins>observer agent point of view</ins>.
+ * -# Adopt the observer agent's point of view.
  *
  * -# Refine abductive explanations from the observer agent point of view.
  *
@@ -105,7 +105,7 @@
  * (\f$i\f$'s) view. This corresponds to \f$T_{i,j,i}\f$.
  *
  * For the discussion that follows, we use the following notation in reference
- * to the symbols in \f$\eqref{eq:tom-recursion}\f$:
+ * to the symbols in eq. \f$\eqref{eq:tom-recursion}\f$:
  *
  * - The sequence \f$[i, k, ..., l, j]\f$ is the <i>actor viewpoint</i>.
  *
@@ -159,7 +159,7 @@
  * depending on the application's needs. The default computation performs these
  * two steps:
  *
- * -# First, for every potential explanation (i.e. every disjunct in
+ * -# First, for every potential explanation (i.e. every disjunct in eq.
  * \f$\eqref{eq:dnf}\f$), uninformative atoms are removed.
  *
  * -# Second, disjuncts that are incompatible with the impossibility
@@ -225,14 +225,14 @@
  * -# For every literal originated in an abductive reasoning process (annotated
  * with <tt>source(abduction)</tt>):
  *
- *      -# Extract the <i>viewpoint</i> at which it was generated and the
- *      associated explanation.
+ * -# Extract the <i>viewpoint</i> at which it was generated and the associated
+ * explanation.
  *
- *      -# Adopt the <i>viewpoint</i> in question.
+ * -# Adopt the <i>viewpoint</i> in question.
  *
- *      -# If the associated explanation can now be derived from the current
- *      program, drop the abductive literal from \f$T_i\f$, since it is no
- *      longer informative.
+ * -# If the associated explanation can now be derived from the current
+ * program, drop the abductive literal from \f$T_i\f$, since it is no longer
+ * informative.
  *
  * This default explanation update function is implemented in the \ref
  * tomabd.agent.TomAbdAgent.euf method, and can be overridden by the MAS
@@ -325,13 +325,12 @@
  * of a message with this performative triggers the execution of
  * <b>TomAbductionTask</b>:
  *
- * \code{.asl} !kqml_received(KQML_Sender_Var, publicAction, Action,
- * KQML_MsgId) : c
- *      <- ...
+ * \code{.asl} !kqml_received(Sender, publicAction, Action, KQML_MsgId) : c
+ *      <- ...;
  *      // first-order Theory of Mind -- abduction task
  *      tomabd.agent.tom_abduction_task(
  *          [],
- *          KQML_Sender_Var,
+ *          Sender,
  *          Action,
  *          ActExpls,
  *          ObsExpls,

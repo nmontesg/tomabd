@@ -106,10 +106,10 @@ Agent model</h1>
 <p>For an example to help understand the discussion that follows, the reader is directed to the <a href="...">examples folder</a>.</p>
 <p>The agent model that this package implements revolves around the function <b>TomAbductionTask</b>, implemented by <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#aaf51ef6b8779de9417d668237395702c">tomabd.agent.TomAbdAgent.tomAbductionTask</a>. One execution of this functiontask is composed of these steps:</p>
 <ol type="1">
-<li>Adopt the <ins>acting agent point of view</ins>.</li>
+<li>Adopt the acting agent's point of view.</li>
 <li>Generate abductive explanations.</li>
 <li>Refine abductive explanations from the acting agent point of view.</li>
-<li>Adopt the <ins>observer agent point of view</ins>.</li>
+<li>Adopt the observer agent's point of view.</li>
 <li>Refine abductive explanations from the observer agent point of view.</li>
 </ol>
 <p>Steps 1 and 4 are covered in <a class="el" href="index.html#viewpoint">Adopting a different viewpoint</a>. Steps 2, and 3 and 5 are covered in <a class="el" href="index.html#abduction">Generating and refining abductive explanations</a>.</p>
@@ -133,7 +133,7 @@ Adopting a different viewpoint</h2>
 \begin{equation} T_{i,k, ..., l, j} = \{\phi \mid T_{i, k, ..., l} \models \texttt{believes}(j, \phi)\} \label{eq:tom-recursion} \end{equation}
 </p>
 <p>For example, \(i\) might want to know how \(j\) is estimating that \(k\) is perceiving the world. This corresponds to \(T_{i,j,k}\), a <em>second-order</em> Theory of Mind substitution. In particular, it might be the case that \(i\) wants to know how \(j\) is estimating its own ( \(i\)'s) view. This corresponds to \(T_{i,j,i}\).</p>
-<p>For the discussion that follows, we use the following notation in reference to the symbols in \(\eqref{eq:tom-recursion}\):</p>
+<p>For the discussion that follows, we use the following notation in reference to the symbols in eq. \(\eqref{eq:tom-recursion}\):</p>
 <ul>
 <li>The sequence \([i, k, ..., l, j]\) is the <em>actor viewpoint</em>.</li>
 <li>The last element of the sequence ( \(j\)) is the <em>acting agent</em>.</li>
@@ -150,7 +150,7 @@ Generating and refining abductive explanations</h2>
 <p>where all \(\phi_{rs}\) are derivable from the current belief base, i.e. \(T_{i, k, ..., l, j} \models \texttt{abducible}(\phi_{rs})\). Within the agent class, this DNF is implemented as a list of lists.</p>
 <p>The raw explanations \(\Phi\) need to be post-processed. First, this is done with respect to the viewpoint of the acting agent. This step allows the opportunity to refine the raw explanations to, for example, check for inconsistencies with respect to the current agent program. This explanation refinement step is implemented by the method <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#afc4ca0d2ca0d89cc41503662dd73ff97">tomabd.agent.TomAbdAgent.erf</a>, which can be overridden by the MAS developer depending on the application's needs. The default computation performs these two steps:</p>
 <ol type="1">
-<li>First, for every potential explanation (i.e. every disjunct in \(\eqref{eq:dnf}\)), uninformative atoms are removed.</li>
+<li>First, for every potential explanation (i.e. every disjunct in eq. \(\eqref{eq:dnf}\)), uninformative atoms are removed.</li>
 <li>Second, disjuncts that are incompatible with the impossibility constraints in the current program \(T_{i,j,...,k,l}\) (i.e. at the acting agent viewpoint) are removed.</li>
 </ol>
 <p>The refined explanations with respect to the observer viewpoint are denoted by \(\Phi^{obs}\): </p><p class="formulaDsp">
@@ -172,16 +172,12 @@ Updating abductive explanation</h2>
 <p>Abductive explanation, once generated, will not be valid forever, since the environment is dynamic. Therefore, the <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html">tomabd.agent.TomAbdAgent</a> has a custom belief update function (BUF) that includes a call to an explanation update function (EUF). The default implementation of EUF follows these steps:</p>
 <ol type="1">
 <li>Update the belief base according to <code>buf()</code>.</li>
-<li>For every literal originated in an abductive reasoning process (annotated with <code>source(abduction)</code>): <pre class="fragment"> -# Extract the &lt;i&gt;viewpoint&lt;/i&gt; at which it was generated and the
- associated explanation.
-
- -# Adopt the &lt;i&gt;viewpoint&lt;/i&gt; in question.
-
- -# If the associated explanation can now be derived from the current
- program, drop the abductive literal from \f$T_i\f$, since it is no
- longer informative.
-</pre> This default explanation update function is implemented in the <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#a30ec38dd1bf80132356572011a691e10">tomabd.agent.TomAbdAgent.euf</a> method, and can be overridden by the MAS developer in a custom subclass.</li>
+<li>For every literal originated in an abductive reasoning process (annotated with <code>source(abduction)</code>):</li>
+<li>Extract the <em>viewpoint</em> at which it was generated and the associated explanation.</li>
+<li>Adopt the <em>viewpoint</em> in question.</li>
+<li>If the associated explanation can now be derived from the current program, drop the abductive literal from \(T_i\), since it is no longer informative.</li>
 </ol>
+<p>This default explanation update function is implemented in the <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#a30ec38dd1bf80132356572011a691e10">tomabd.agent.TomAbdAgent.euf</a> method, and can be overridden by the MAS developer in a custom subclass.</p>
 <h2><a class="anchor" id="action-selection"></a>
 Action selection</h2>
 <p>The whole purpose of the ToM+Abd task is to have the observer agent \(i\) in a more informed position when it is \(i\)'s turn to act, thanks to the additional knowledge derived from <b>TomAbductionTask</b>. Hence, this package also implements a basic action selection function that takes into account impossibility constraints derived from abductive reasonings.</p>
@@ -232,20 +228,19 @@ Usage</h1>
 <div class="line">    );</div>
 <div class="line">    ...</div>
 </div><!-- fragment --><p>The decision when to invoke this IA is domain-specific and is left to the MAS developer. For example, in the Hanabi game a custom KQML performative <code>publicAction</code> is used to announce the selected action. A reception of a message with this performative triggers the execution of <b>TomAbductionTask</b>:</p>
-<div class="fragment"><div class="line"> !kqml_received(KQML_Sender_Var, publicAction, Action,</div>
-<div class="line">KQML_MsgId) : c</div>
-<div class="line">     &lt;- ...</div>
-<div class="line">     // first-order Theory of Mind -- abduction task</div>
-<div class="line">     tomabd.agent.tom_abduction_task(</div>
-<div class="line">         [],</div>
-<div class="line">         KQML_Sender_Var,</div>
-<div class="line">         Action,</div>
-<div class="line">         ActExpls,</div>
-<div class="line">         ObsExpls,</div>
-<div class="line">         ActTomTule,</div>
-<div class="line">         ObsTomRule</div>
-<div class="line">     );</div>
-<div class="line">     ...</div>
+<div class="fragment"><div class="line">!kqml_received(Sender, publicAction, Action, KQML_MsgId) : c</div>
+<div class="line">    &lt;- ...;</div>
+<div class="line">    // first-order Theory of Mind -- abduction task</div>
+<div class="line">    tomabd.agent.tom_abduction_task(</div>
+<div class="line">        [],</div>
+<div class="line">        Sender,</div>
+<div class="line">        Action,</div>
+<div class="line">        ActExpls,</div>
+<div class="line">        ObsExpls,</div>
+<div class="line">        ActTomTule,</div>
+<div class="line">        ObsTomRule</div>
+<div class="line">    );</div>
+<div class="line">    ...</div>
 </div><!-- fragment --><p>If one wishes to use the <a class="el" href="classtomabd_1_1agent_1_1TomAbdAgent.html#a0c75277f5b2895c484e9c5bef7d1d47d">tomabd.agent.TomAbdAgent.selectAction</a> method to select the next agent action, the IA <a class="el" href="classtomabd_1_1agent_1_1select__action.html">tomabd.agent.select_action</a> acts as an interface to this method. It is used as follows:</p>
 <div class="fragment"><div class="line">+!g : c</div>
 <div class="line">     &lt;- ...;</div>
@@ -262,7 +257,7 @@ Usage</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Fri Oct 28 2022 10:54:42 for Theory of Mind + Abduction by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Fri Oct 28 2022 11:00:45 for Theory of Mind + Abduction by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>

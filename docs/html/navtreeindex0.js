@@ -1,5 +1,6 @@
 var NAVTREEINDEX0 =
 {
+"":[1,0,0],
 "annotated.html":[2,0],
 "classes.html":[2,1],
 "classtomabd_1_1agent_1_1TomAbdAgent.html":[2,0,0,0,2],
@@ -34,8 +35,8 @@ var NAVTREEINDEX0 =
 "functions.html":[2,2,0],
 "functions_func.html":[2,2,1],
 "functions_vars.html":[2,2,2],
-"index.html":[0],
 "index.html":[],
+"index.html":[0],
 "index.html#abduction":[0,0,1],
 "index.html#action-selection":[0,0,3],
 "index.html#euf":[0,0,2],
@@ -45,6 +46,5 @@ var NAVTREEINDEX0 =
 "namespaces.html":[1,0],
 "namespacetomabd_1_1agent.html":[1,0,0,0],
 "namespacetomabd_1_1misc.html":[1,0,0,1],
-"pages.html":[],
-"":[1,0,0]
+"pages.html":[]
 };
