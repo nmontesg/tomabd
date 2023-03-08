@@ -20,6 +20,6 @@ MAS hanabi_NUMPLAYERS_SEED {
         emma hanabi_player
             agentClass tomabd.agent.TomAbdAgent;
 
-    classpath: "../../lib/tomabd.jar";
+    classpath: "../../libs/tomabd.jar";
 
 }

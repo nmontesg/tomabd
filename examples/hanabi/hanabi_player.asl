@@ -28,7 +28,7 @@ domain(hanabi).
     }
 
     // log initial probability distributions
-    // !log_probability_distributions(false);
+    !log_probability_distributions(false);
     
     // inform that I am ready to start the game
     inform_ready.
@@ -48,8 +48,8 @@ all_minus_me(L) [domain(hanabi)] :-
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
     !perform_action;
 
-    // .broadcast(achieve, log_probability);
-    // !log_probability_distributions(false);
+    .broadcast(achieve, log_probability);
+    !log_probability_distributions(false);
 
     finish_turn.
 
@@ -118,18 +118,18 @@ all_minus_me(L) [domain(hanabi)] :-
     }
 
     // first-order Theory of Mind -- abduction task
-    tomabd.agent.tom_abduction_task(
-        [],
-        KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomRule, ObsTomRule, ET
-    );
+    // tomabd.agent.tom_abduction_task(
+    //     [],
+    //     KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomRule, ObsTomRule, ET
+    // );
 
-    if ( .type(ObsTomRule, literal) ) {
+    // if ( .type(ObsTomRule, literal) ) {
         // .log(info, ObsTomRule);
-        .length(ObsExpls, L);
-        .log(info, "n = ", L, "; et = ", ET);
-        +ObsTomRule;
+        // .length(ObsExpls, L);
+        // .log(info, "n = ", L, "; et = ", ET);
+        // +ObsTomRule;
         // +latest_abductive_rule(ObsTomRule);
-    }
+    // }
 
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
         .concat("has_card_", Mode, String);
