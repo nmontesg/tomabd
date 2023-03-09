@@ -80,8 +80,6 @@ def kullback_leibler_distance(Q, P, slot, base=25):
 
 
 def process_hint(hint_move, seed, base=25):
-    print(hint_move)
-    print()
     move = hint_move["move"]
     receiver = hint_move["receiver"]
 
@@ -105,11 +103,7 @@ def process_hint(hint_move, seed, base=25):
     # compute the distance from the EXPLICIT distribution to the true distribution
     distance_explicit = {}
     for s in range(1, slots_per_player+1):
-        print(f"{receiver}-{s}")
         true_card = hint_move["{}-{}".format(receiver, s)].split('-')
-        print(f"{receiver}-{s}".split('-'))
-        print(true_card)
-        # break
         color = true_card[0]
         rank = int(true_card[1])
         q = post_action_distribution.loc[ \
@@ -163,7 +157,6 @@ def process_game(seed, **kwargs):
     evolution_file = "{}/{}_players/results_{}_{}/evolution.csv".\
         format(results_parent_path, num_players, num_players, seed)
     evolution = pd.read_csv(evolution_file, sep=';', on_bad_lines='error')
-    print(evolution)
 
     # find the basic results
     results["moves"] = evolution["move"].iloc[-1]
@@ -173,11 +166,8 @@ def process_game(seed, **kwargs):
     # find the game moves where hints were given and find who received that
     # hint
     hint_moves = evolution.loc[evolution["action_functor"] == "give_hint"]
-    print(hint_moves)
     receiver = hint_moves["actions_args"].apply(lambda s: get_arg(s, 0, ','))
     hint_moves.insert(hint_moves.shape[1], "receiver", receiver)
-    print(hint_moves)
-    return
 
     basic_cols = ['move', 'receiver', 'slot', 'explicit_info']
     if ns.abd == "true":
@@ -186,7 +176,6 @@ def process_game(seed, **kwargs):
 
     for _, h in hint_moves.iterrows():
         hint_res = process_hint(h, seed, **kwargs)
-        print(hint_res)
         for s in range(1, slots_per_player+1):
             new_row = {'move': [hint_res[0]], 'receiver': [hint_res[1]]}
             new_row['slot'] = [s]

@@ -103,6 +103,7 @@ all_minus_me(L) [domain(hanabi)] :-
 @kqmlReceivedPublicAction[domain(hanabi), atomic]
 +!kqml_received(KQML_Sender_Var, publicAction, Action, KQML_MsgId) : .my_name(Me)
     <-
+    /*
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
         .concat("has_card_", Mode, String);
         .term2string(Term, String);
@@ -116,20 +117,20 @@ all_minus_me(L) [domain(hanabi)] :-
             }
         }
     }
-
+    
     // first-order Theory of Mind -- abduction task
-    // tomabd.agent.tom_abduction_task(
-    //     [],
-    //     KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomRule, ObsTomRule, ET
-    // );
+    tomabd.agent.tom_abduction_task(
+        [],
+        KQML_Sender_Var, Action, ActExpls, ObsExpls, ActTomRule, ObsTomRule, ET
+    );
 
-    // if ( .type(ObsTomRule, literal) ) {
-        // .log(info, ObsTomRule);
-        // .length(ObsExpls, L);
-        // .log(info, "n = ", L, "; et = ", ET);
-        // +ObsTomRule;
-        // +latest_abductive_rule(ObsTomRule);
-    // }
+    if ( .type(ObsTomRule, literal) ) {
+        .log(info, ObsTomRule);
+        .length(ObsExpls, L);
+        .log(info, "n = ", L, "; et = ", ET);
+        +ObsTomRule;
+        +latest_abductive_rule(ObsTomRule);
+    }
 
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
         .concat("has_card_", Mode, String);
@@ -144,6 +145,7 @@ all_minus_me(L) [domain(hanabi)] :-
             }
         }
     }
+    */
 
     .send(KQML_Sender_Var, tell, abduction_finished).
 
