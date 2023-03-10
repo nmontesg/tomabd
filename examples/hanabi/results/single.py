@@ -30,11 +30,9 @@ parser.add_argument('N', type=int, help='process the games with N players')
 ns = parser.parse_args()
 
 # global variables
-results_home = "/home/nmontes/Documentos/hanabi-results"
-# results_home = "/home/nmontes/hanabi-results"
-results_parent_path = "{}/abd-{}".format(results_home, ns.abd)
+results_home = "/home/nmontes/hanabi-results"
 num_players = ns.N
-path = "{}/{}_players".format(results_parent_path, num_players)
+path = f"{results_home}/abd-{ns.abd}/{num_players}_players"
 slots_per_player = 5 if num_players == 2 or num_players == 3 else 4
 max_seed = 500
 
@@ -154,8 +152,7 @@ def process_hint(hint_move, seed, base=25):
 def process_game(seed, **kwargs):
     results = {}
 
-    evolution_file = "{}/{}_players/results_{}_{}/evolution.csv".\
-        format(results_parent_path, num_players, num_players, seed)
+    evolution_file = f"{path}/results_{num_players}_{seed}/evolution.csv"
     evolution = pd.read_csv(evolution_file, sep=';', on_bad_lines='error')
 
     # find the basic results
@@ -203,12 +200,41 @@ def process_bunch(indices):
             file resulted in error".format(num_players, seed))
             continue
         info_file = "info_gain_{}_{}_{}.csv".format(ns.abd, num_players, seed)
-        info_df.to_csv(info_file, sep=';', index=False)
+        info_df.to_csv(f"{info_file}", sep=';', index=False)
         results["seed"] = seed
         res = {k: [v] for k, v in results.items()}
         results_df = pd.DataFrame.from_dict(res)
         all_games = pd.concat([all_games, results_df])
 
+    return all_games
+
+
+def process_game_basic(seed):
+    results = {}
+    evolution_file = f"{path}/results_{num_players}_{seed}/evolution.csv"
+    evolution = pd.read_csv(evolution_file, sep=';', on_bad_lines='error')
+    results["moves"] = evolution["move"].iloc[-1]
+    results["score"] = evolution["score"].iloc[-1]
+    results["hints"] = evolution["hints"].iloc[-1]
+    return results
+
+
+def process_bunch_basic(indices):
+    start = indices[0]
+    stop = indices[1]
+    all_games = pd.DataFrame()
+
+    for seed in range(start, stop+1):
+        try:
+            results = process_game_basic(seed)
+        except ParserError:
+            logging.warning("For {} players and seed {}, reading the evolution \
+            file resulted in error".format(num_players, seed))
+            continue
+        results["seed"] = seed
+        res = {k: [v] for k, v in results.items()}
+        results_df = pd.DataFrame.from_dict(res)
+        all_games = pd.concat([all_games, results_df])
     return all_games
 
 
@@ -224,8 +250,7 @@ if __name__ == '__main__':
         logging.info("For {} players, the following seeds are missing: {}".\
             format(num_players, missing_seeds))
 
-    # num_cpus = mp.cpu_count() if len(seeds) > mp.cpu_count() else len(seeds)
-    num_cpus = 1
+    num_cpus = mp.cpu_count() if len(seeds) > mp.cpu_count() else len(seeds)
 
     calls_per_cpu = len(seeds) // num_cpus
     spare_calls = len(seeds) % num_cpus
@@ -239,9 +264,9 @@ if __name__ == '__main__':
         start = stop+1
 
     pool = mp.Pool(num_cpus)
-    result = pool.map(process_bunch, indices)
+    result = pool.map(process_bunch_basic, indices)
     pool.close()
 
     all_games = pd.concat(result, ignore_index=True)
     summary_file = "summary_{}_{}_players.csv".format(ns.abd, num_players)
-    all_games.to_csv(summary_file, sep=';', index=False)
+    all_games.to_csv(f"{summary_file}", sep=';', index=False)

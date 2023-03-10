@@ -42,7 +42,7 @@ all_minus_me(L) [domain(hanabi)] :-
 
 
 @takeTurn[domain(hanabi)]
-+player_turn(Me) : .my_name(Me) // & .my_name(alice)
++player_turn(Me) : .my_name(Me)
     <-
     !select_action;
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
@@ -103,6 +103,8 @@ all_minus_me(L) [domain(hanabi)] :-
 @kqmlReceivedPublicAction[domain(hanabi), atomic]
 +!kqml_received(KQML_Sender_Var, publicAction, Action, KQML_MsgId) : .my_name(Me)
     <-
+    /* Uncomment the following block to activate TomAbductionTask */
+
     /*
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
         .concat("has_card_", Mode, String);
