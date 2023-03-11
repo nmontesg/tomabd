@@ -10,10 +10,7 @@ domain(hanabi).
 !get_ready.
 
 @getReady[domain(hanabi), atomic]
-+!get_ready
-
-
-    : seed(Seed) & .my_name(Me) & num_players(NP) & cards_per_player(N)
++!get_ready : seed(Seed) & .my_name(Me) & num_players(NP) & cards_per_player(N)
     
     <- .set_random_seed(Seed);
 
@@ -28,7 +25,7 @@ domain(hanabi).
     }
 
     // log initial probability distributions
-    !log_probability_distributions(false);
+    // !log_probability_distributions(false);
     
     // inform that I am ready to start the game
     inform_ready.
@@ -48,8 +45,8 @@ all_minus_me(L) [domain(hanabi)] :-
     .wait(all_minus_me(L) & .findall(Src, abduction_finished [source(Src)], L0) & .sort(L0, L));
     !perform_action;
 
-    .broadcast(achieve, log_probability);
-    !log_probability_distributions(false);
+    // .broadcast(achieve, log_probability);
+    // !log_probability_distributions(false);
 
     finish_turn.
 
@@ -105,7 +102,6 @@ all_minus_me(L) [domain(hanabi)] :-
     <-
     /* Uncomment the following block to activate TomAbductionTask */
 
-    /*
     if ( Action = give_hint(HintedPlayer, Mode, Value, SlotList) ) {
         .concat("has_card_", Mode, String);
         .term2string(Term, String);
@@ -127,9 +123,6 @@ all_minus_me(L) [domain(hanabi)] :-
     );
 
     if ( .type(ObsTomRule, literal) ) {
-        .log(info, ObsTomRule);
-        .length(ObsExpls, L);
-        .log(info, "n = ", L, "; et = ", ET);
         +ObsTomRule;
         +latest_abductive_rule(ObsTomRule);
     }
@@ -147,7 +140,6 @@ all_minus_me(L) [domain(hanabi)] :-
             }
         }
     }
-    */
 
     .send(KQML_Sender_Var, tell, abduction_finished).
 

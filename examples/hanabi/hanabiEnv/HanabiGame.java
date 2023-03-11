@@ -52,8 +52,8 @@ public class HanabiGame extends Environment {
     private int hintId;
     private int seed;
 
-    private File evolutionLogger;
-    private BufferedWriter evolutionBuffer;
+    // private File evolutionLogger;
+    // private BufferedWriter evolutionBuffer;
 
     @Override
     public void init(String[] args) {
@@ -187,26 +187,26 @@ public class HanabiGame extends Environment {
         addPercept(Literal.parseLiteral(String.format("move(%d)", move)));
 
         // set up logger for the overall evolution of the game
-        try {
-            Files.createDirectories(Paths.get(String.format("results_%d_%d", numPlayers, seed)));
-            String evolutionFileName = String.format("results_%d_%d/evolution.csv", numPlayers, seed);
-            evolutionLogger = new File(evolutionFileName);
-            evolutionLogger.createNewFile();
-            FileWriter evolutionWriter = new FileWriter(evolutionFileName);
-            evolutionBuffer = new BufferedWriter(evolutionWriter);
-            evolutionBuffer.write("move;player;action_functor;actions_args;hints;score");
-            for (String ag: agents) {
-                for (int i = 1; i <= cardsPerPlayer; i++) {
-                    evolutionBuffer.write(String.format(";%s-%d", ag, i));
-                }
-            }
-            evolutionBuffer.write("\n");
+        // try {
+        //     Files.createDirectories(Paths.get(String.format("results_%d_%d", numPlayers, seed)));
+        //     String evolutionFileName = String.format("results_%d_%d/evolution.csv", numPlayers, seed);
+        //     evolutionLogger = new File(evolutionFileName);
+        //     evolutionLogger.createNewFile();
+        //     FileWriter evolutionWriter = new FileWriter(evolutionFileName);
+        //     evolutionBuffer = new BufferedWriter(evolutionWriter);
+        //     evolutionBuffer.write("move;player;action_functor;actions_args;hints;score");
+        //     for (String ag: agents) {
+        //         for (int i = 1; i <= cardsPerPlayer; i++) {
+        //             evolutionBuffer.write(String.format(";%s-%d", ag, i));
+        //         }
+        //     }
+        //     evolutionBuffer.write("\n");
 
-            evolutionBuffer.write("0;none;none;none;0;0");
-            logCardDistributions();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //     evolutionBuffer.write("0;none;none;none;0;0");
+        //     logCardDistributions();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
 
     }
 
@@ -242,37 +242,37 @@ public class HanabiGame extends Environment {
             case "play_card":
                 slot = Integer.parseInt(action.getTerm(0).toString());
                 result = playCard(agent, slot);
-                try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, action.getFunctor(), slot, hintId, score));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // try {
+                //     evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, action.getFunctor(), slot, hintId, score));
+                // } catch (IOException e) {
+                //     e.printStackTrace();
+                // }
                 break;
 
             case "discard_card":
                 slot = Integer.parseInt(action.getTerm(0).toString());
                 result = discardCard(agent, slot);
-                try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, action.getFunctor(), slot, hintId, score));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // try {
+                //     evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, action.getFunctor(), slot, hintId, score));
+                // } catch (IOException e) {
+                //     e.printStackTrace();
+                // }
                 break;
             
             case "spend_info_token":
                 result = spendInfoToken();
                 String actionArgs = action.getTerms().toString();
                 String actionArgsNoBrack = actionArgs.substring(1, actionArgs.length()-1);
-                try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, "give_hint", actionArgsNoBrack, hintId, score));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // try {
+                //     evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move-1, agent, "give_hint", actionArgsNoBrack, hintId, score));
+                // } catch (IOException e) {
+                //     e.printStackTrace();
+                // }
                 break;
 
-            case "record_card_distributions":
-                result = logCardDistributions();
-                break;
+            // case "record_card_distributions":
+            //     result = logCardDistributions();
+            //     break;
 
             default:
                 break;
@@ -409,12 +409,12 @@ public class HanabiGame extends Environment {
             addPercept(Literal.parseLiteral(String.format("score(%d)",score)));
             // if current score == maxScore: finish execution of the game
             if (score == maxScore) {
-                try {
-                    evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move, agent, "play_card", slot, hintId, score));
-                    logCardDistributions();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                // try {
+                //     evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move, agent, "play_card", slot, hintId, score));
+                //     logCardDistributions();
+                // } catch (IOException e) {
+                //     e.printStackTrace();
+                // }
                 stop();
             } else if (rank == numRanks && numInfoTokens < maxInfoTokens) {
                 // complete stack has bonus: plus one information token
@@ -442,12 +442,12 @@ public class HanabiGame extends Environment {
             score = 0;
             removePerceptsByUnif(Literal.parseLiteral(String.format("score(_)")));
             addPercept(Literal.parseLiteral(String.format("score(%d)", score)));
-            try {
-                evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move, agent, "play_card", slot, hintId, score));
-                logCardDistributions();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            // try {
+            //     evolutionBuffer.write(String.format("%d;%s;%s;%s;%d;%d", move, agent, "play_card", slot, hintId, score));
+            //     logCardDistributions();
+            // } catch (IOException e) {
+            //     e.printStackTrace();
+            // }
             stop();
         }
 
@@ -518,34 +518,34 @@ public class HanabiGame extends Environment {
         return true;
     }
 
-    private boolean logCardDistributions() {
-        try {
-            for (int i = 0; i < numPlayers; i++) {
-                for (int s = 1; s <= cardsPerPlayer; s++) {
-                    HanabiCard card = cardHolders[i].getCard(s);
-                    if (card == null) {
-                        evolutionBuffer.write(";none");
-                    } else {
-                        evolutionBuffer.write(String.format(";%s-%d", card.getColor(), card.getRank()));
-                    }
-                }
-            }
-            evolutionBuffer.write("\n");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return true;
-    }
+    // private boolean logCardDistributions() {
+    //     try {
+    //         for (int i = 0; i < numPlayers; i++) {
+    //             for (int s = 1; s <= cardsPerPlayer; s++) {
+    //                 HanabiCard card = cardHolders[i].getCard(s);
+    //                 if (card == null) {
+    //                     evolutionBuffer.write(";none");
+    //                 } else {
+    //                     evolutionBuffer.write(String.format(";%s-%d", card.getColor(), card.getRank()));
+    //                 }
+    //             }
+    //         }
+    //         evolutionBuffer.write("\n");
+    //     } catch (IOException e) {
+    //         e.printStackTrace();
+    //     }
+    //     return true;
+    // }
 
     @Override
     public void stop() {
         super.stop();
         System.out.println(String.format("Game (seed %d) finished with score %d, %d hints and %d moves.", seed, score, hintId, move));
-        try {
-            evolutionBuffer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // try {
+        //     evolutionBuffer.close();
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
         System.exit(0);
     }
 
